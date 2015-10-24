@@ -1,6 +1,6 @@
-#FromjpAdmin
+#Laravel 5 Admin Backend
 
-**FromjpAdmin** for Laravel 5.1 based in  [BackendL5](https://github.com/raulduran/backendl5)
+**Laravel 5 Admin Backend** for Laravel 5.1 based in  [BackendL5](https://github.com/raulduran/backendl5)
 
 [TOC]
 
@@ -30,8 +30,8 @@ npm install -g gulp
 
 ###Git项目初始化
 ```
-git clone https://zxishere@bitbucket.org/zxishere/fromjp.git fromjp
-cd fromjp
+git clone https://github.com/zxishere/laravel-5-admin.git projectname
+cd projectname
 rd /s /q  .git
 copy .env.example .env
 composer install
@@ -62,18 +62,18 @@ nrm use taobao便可切换到taobao源
 `homestead provision`
 
 - 启动Homestead
-进入C:\Users\zxish\.homestead `homestead up`
+进入C:\Users\[yourname]\.homestead `homestead up`
 
 - 编辑Host文件
 > 192.168.10.10     homestead.app
-192.168.10.10   fromjp.app
+192.168.10.10   project.app
 192.168.10.10   phpmyadmin.app
 
 ###Git项目初始化
 ```
 cd Code
-git clone https://zxishere@bitbucket.org/zxishere/fromjp.git fromjp
-cd fromjp
+git clone https://github.com/zxishere/laravel-5-admin.git projectname
+cd projectname
 rm -rf .git
 cp .env.example .env
 composer config -g repositories.packagist composer http://packagist.phpcomposer.com
@@ -143,8 +143,7 @@ bower install admin-lte#latest --save
 git config --global user.name "Hiro-PC"
 git config --global user.email zxishere@gmail.com
 git remote -v
-git remote add github https://github.com/zxishere/laravel-5-admin.git
-git remote add bitbucket https://zxishere@bitbucket.org/zxishere/fromjp.git
+git remote add xxx https:xxx.git
 ```
 
 
