@@ -61,8 +61,8 @@ nrm use taobao便可切换到taobao源
 修改完Homestead.yaml后，务必运行下面命令以使配置生效：
 `homestead provision`
 
-- 启动Homestead
-进入C:\Users\[yourname]\.homestead `homestead up`
+- 启动Homestead  `homestead up` 关机 `homestead halt`
+
 
 - 编辑Host文件
 > 192.168.10.10     homestead.app
