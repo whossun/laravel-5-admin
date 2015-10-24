@@ -1,0 +1,24 @@
+<?php namespace DummyNamespace;
+
+use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Date\Date;
+
+class DummyClass extends Model {
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name'];
+
+    /**
+     * Get the created date
+     *
+     * @return string
+     */
+    public function getCreatedAttribute()
+    {
+        return Date::parse($this->created_at)->format('d-m-Y');
+    }
+}

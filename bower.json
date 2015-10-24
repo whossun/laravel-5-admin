@@ -1,0 +1,11 @@
+{
+  "name": "fromjp",
+  "dependencies": {
+    "AdminLTE": "admin-lte#~2.3.0",
+    "font-awesome": "~4.4.0",
+    "Ionicons": "ionicons#~2.0.1",
+    "datatables": "~1.10.9",
+    "bootstrap": "~3.3.5",
+    "sweetalert": "~1.1.3"
+  }
+}
