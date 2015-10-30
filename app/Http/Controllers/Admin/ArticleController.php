@@ -43,7 +43,7 @@ class ArticleController extends Controller {
     {
 
         $data = $request->all();
-        $data['author'] =  auth()->user()->id();
+        $data['author'] =  auth()->user()->id;
         $article = $this->article->save(null,$data);
         $route = ($request->get('task')=='apply') ? route('admin.articles.edit', $article->id) : route('admin.articles.index');
         return redirect($route)->with([
@@ -90,12 +90,6 @@ class ArticleController extends Controller {
         ]);
     }
 
-   /**
-     * Remove  resources from storage.
-     *
-     * @param  array  $id
-     * @return Response
-     */
     public function destroy($ids)
     {
         foreach (explode(',', $ids) as $id) {
