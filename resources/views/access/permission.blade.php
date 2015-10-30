@@ -1,7 +1,7 @@
 @extends('layout.partials.show')
 
 @section('name')
-    {{ $permission->label }}
+    {{ $permission->display_name }}
 @stop
 
 @section('show')

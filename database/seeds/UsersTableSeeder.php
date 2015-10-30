@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\User;
-use App\Role;
-use App\Permission;
+use App\Models\User;
+use App\Models\Role;
+use App\Models\Permission;
 
 class UsersTableSeeder extends Seeder
 {
@@ -21,23 +21,38 @@ class UsersTableSeeder extends Seeder
 
         //User
         $admin = User::create([
-            'email' => 'demo@demo.com',
-            'name' => 'Demo User',
-            'password' => bcrypt('demo')
+            'email' => 'admin@admin.com',
+            'name' => '管理员',
+            'password' => bcrypt('adminadmin')
+        ]);
+
+        $test_user = User::create([
+            'email' => 'test@test.com',
+            'name' => '测试用户',
+            'password' => bcrypt('testtest')
         ]);
 
         //Roles
-        $role_admin = Role::create(['name' => 'admin', 'label' => 'Administrador']);
-        $role_editor = Role::create(['name' => 'editor', 'label' => 'Editor']);
-        $role_user = Role::create(['name' => 'user', 'label' => 'Usuario']);
+        $role_admin = Role::create(['name' => 'admin', 'display_name' => '管理员']);
+        $role_editor = Role::create(['name' => 'editor', 'display_name' => '编辑']);
+        $role_user = Role::create(['name' => 'user', 'display_name' => '普通用户']);
 
         //Permission
-        $permission_admin_user = Permission::create(['name' => 'admin_user', 'label' => 'Administrar usuarios']);
+        Permission::create(['name' => 'dashboard_view', 'display_name' => '管理首页']);
+        Permission::create(['name' => 'users_view', 'display_name' => '帐户管理']);
+        Permission::create(['name' => 'users_create', 'display_name' => '新建帐户']);
+        Permission::create(['name' => 'users_update', 'display_name' => '修改帐户']);
+        Permission::create(['name' => 'users_delete', 'display_name' => '删除帐户']);
+
+        Permission::create(['name' => 'articles_view', 'display_name' => '文章管理']);
+        Permission::create(['name' => 'articles_create', 'display_name' => '新建文章']);
+        Permission::create(['name' => 'articles_update', 'display_name' => '修改文章']);
+        Permission::create(['name' => 'articles_delete', 'display_name' => '删除文章']);
 
         //Roles Users
-        $admin->roles()->save($role_admin);
+        $test_user->roles()->save($role_editor);
 
         //Roles Users
-        $role_admin->givePermissionTo($permission_admin_user);
+        // $role_admin->givePermissionTo($permission_admin_user);
     }
 }

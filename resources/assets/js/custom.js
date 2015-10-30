@@ -60,20 +60,27 @@ var check_sidebar = function() {
 }
 
 var AdminLTEOptions = {
-    sidebarSlimScroll: true,
+    // sidebarSlimScroll: true,
     // sidebarExpandOnHover: true,
     animationSpeed: 100,
- 
-};
+ };
 
 $(function() {
 
+    check_sidebar();
+
     $('.sidebar-toggle').click(function(e) {
         e.preventDefault();
-        store('sidebar-hide', $('body').hasClass('sidebar-collapse'));
+        store('sidebar-hide', !$('body').hasClass('sidebar-collapse'));
+        // console.log(get('sidebar-hide'));
     });
 
-    check_sidebar();
+    $('.fullscreen-toggle').click(function(e) {
+        e.preventDefault();
+        $(document).toggleFullScreen();
+        $(this).find('i').toggleClass('ion-arrow-expand ion-arrow-shrink')
+    });
+
 
 	$('#frmModel .btn-apply').click(function(e){
         e.preventDefault();

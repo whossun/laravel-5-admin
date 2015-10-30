@@ -8,6 +8,7 @@
             {{-- @include('layout.partials.nav.notifications') --}}
             {{-- @include('layout.partials.nav.tasks') --}}
             @include('layout.partials.nav.profile')
+            <li><a href="javascript:;" class="fullscreen-toggle"><i class="icon ion-arrow-expand"></i></a></li>
         </ul>
     </div>
 </nav>

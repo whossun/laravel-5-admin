@@ -1,13 +1,13 @@
 <?php namespace App\Forms;
 
-use App\Permission;
+use App\Models\Permission;
 use Kris\LaravelFormBuilder\Form;
 
 class RoleForm extends Form
 {
     protected function getPermissions()
     {
-        return Permission::lists('label', 'id')->toArray();
+        return Permission::lists('display_name', 'id')->toArray();
     }
 
     protected function getPermissionsSelected()
@@ -19,11 +19,11 @@ class RoleForm extends Form
     {
         $this
             ->add('name', 'text', ['label' => trans('messages.name')])
-            ->add('label', 'text', ['label' => trans('messages.label')])
+            ->add('display_name', 'text', ['label' => trans('messages.label')])
             ->add('permissions', 'select', [
                 'choices' => $this->getPermissions(),
                 'selected' => $this->getPermissionsSelected(),
-                'label' => trans('messages.permissions.index'),
+                'display_name' => trans('messages.permissions.index'),
                 'attr' => [
                     'multiple' => true,
                     'id' => 'permissions'

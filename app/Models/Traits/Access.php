@@ -1,8 +1,9 @@
-<?php
+<?php namespace App\Models\Traits;
 
-namespace App;
+use App\Models\Role;
+use App\Models\Permission;
 
-trait HasRoles
+trait Access
 {
     /**
      * Role Relation
@@ -35,8 +36,10 @@ trait HasRoles
         if (is_string($role)) {
             return $this->roles->contains('name', $role);
         }
-
         //intersect: Remove values no present
         return !! $role->intersect($this->roles)->count();
     }
+
+
+
 }

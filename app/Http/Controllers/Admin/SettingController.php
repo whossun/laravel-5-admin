@@ -2,28 +2,29 @@
 
 use Illuminate\Http\Request;
 use Kris\LaravelFormBuilder\FormBuilder;
+
 use App\Http\Controllers\Controller;
-use App\Repositories\UserRepository as User;
-use App\Http\Requests\UserRequest;
+use App\Repositories\SettingRepository as Setting;
+use App\Http\Requests\SettingRequest;
 use Datatables;
 
-class UsersController extends Controller
-{
+class SettingController extends Controller {
+
     /**
-     * Repostory user
+     * Repostory setting
      *
-     * @var UserRepository
+     * @var SettingRepository
      */
-    private $user;
+    private $setting;
 
     /**
      * Construc controller.
      *
-     * @param  User $user
+     * @param  Setting $setting
      */
-    public function __construct(User $user)
+    public function __construct(Setting $setting)
     {
-        $this->user = $user;
+        $this->setting = $setting;
     }
 
     /**
@@ -35,13 +36,13 @@ class UsersController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return Datatables::of($this->user->all())
-            ->addColumn('action', $this->user->action_butttons(['show','edit','delete']))
+            return Datatables::of($this->setting->all())
+            ->addColumn('action', function($model) { return $this->setting->action_butttons($model);})
             ->make(true);
         }
-        $html = $this->user->columns();
+        $html = $this->setting->columns();
         return view('datatable',compact('html'));
-    }    
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -51,9 +52,9 @@ class UsersController extends Controller
      */
     public function create(FormBuilder $formBuilder)
     {
-        $form = $formBuilder->create('App\Forms\UserForm', [
+        $form = $formBuilder->create('App\Forms\SettingForm', [
             'method' => 'POST',
-            'url' => route('admin.users.store')
+            'url' => route('admin.settings.store')
         ]);
 
         return view('layout.partials.form', compact('form'));
@@ -62,18 +63,18 @@ class UsersController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  UserRequest  $request
+     * @param  SettingRequest  $request
      * @return Response
      */
-    public function store(UserRequest $request)
+    public function store(SettingRequest $request)
     {
-        $user = $this->user->save(null, $request->all());
+        $setting = $this->setting->save(null, $request->all());
 
-        $route = ($request->get('task')=='apply') ? route('admin.users.edit', $user->id) : route('admin.users.index');
+        $route = ($request->get('task')=='apply') ? route('admin.settings.edit', $setting->id) : route('admin.settings.index');
 
         return redirect($route)->with([
-            'status' => trans('messages.saved'),
-            'type-status' => 'success'
+            'status' => trans('messages.saved'), 
+            'type' => 'success'
         ]);
     }
 
@@ -85,9 +86,9 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        $user = $this->user->getModel()->findOrFail($id);
+        $setting = $this->setting->getModel()->findOrFail($id);
 
-        return view('users.show', compact('user'));
+        return view('settings.show', compact('setting'));
     }
 
     /**
@@ -99,12 +100,12 @@ class UsersController extends Controller
      */
     public function edit($id, FormBuilder $formBuilder)
     {
-        $user = $this->user->getModel()->findOrFail($id);
+        $setting = $this->setting->getModel()->findOrFail($id);
 
-        $form = $formBuilder->create('App\Forms\UserForm', [
-            'model' => $user,
-            'method' => 'PATCH',
-            'url' => route('admin.users.update', $id)
+        $form = $formBuilder->create('App\Forms\SettingForm', [
+            'model' => $setting,
+            'method' => 'PUT',
+            'url' => route('admin.settings.update', $id)
         ]);
 
         return view('layout.partials.form', compact('form'));
@@ -114,20 +115,18 @@ class UsersController extends Controller
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @param  UserRequest  $request
+     * @param  SettingRequest  $request
      * @return Response
      */
-    public function update($id, UserRequest $request)
+    public function update($id, SettingRequest $request)
     {
-        $data = ($request->has('password')) ? $request->all() : $request->except('password');
+        $this->setting->save($id, $request->all());
 
-        $this->user->save($id, $data);
-
-        $route = ($request->get('task')=='apply') ? route('admin.users.edit', $id) : route('admin.users.index');
+        $route = ($request->get('task')=='apply') ? route('admin.settings.edit', $id) : route('admin.settings.index');
 
         return redirect($route)->with([
-            'status' => trans('messages.saved'),
-            'type-status' => 'success'
+            'status' => trans('messages.saved'), 
+            'type' => 'success'
         ]);
     }
 
@@ -139,11 +138,12 @@ class UsersController extends Controller
      */
     public function destroy($ids)
     {
-        $this->user->deleteAll(explode(',', $ids));
+        $this->setting->deleteAll(explode(',', $ids));
         return [
             'status' => trans('messages.delete.success'), 
-            'type-status' => 'success'
+            'type' => 'success'
         ];
     }
+
 
 }

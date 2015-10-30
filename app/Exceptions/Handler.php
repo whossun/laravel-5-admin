@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Auth;
+
 
 class Handler extends ExceptionHandler
 {
@@ -42,15 +44,31 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        //如果没有对应的route则跳转到登录页面
         if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
-            return redirect(route('admin.dashboard.index'));
+            if (Auth::check()){
+                return parent::render($request, $e);
+            }else{
+                return redirect(route('admin.dashboard.index'));
+            }
         }
-/*        if ($e instanceof ModelNotFoundException) {
-            $e = new NotFoundHttpException($e->getMessage(), $e);
-        }*/
-        
-
-        return parent::render($request, $e);
+        if ($this->isHttpException($e))
+        {
+            if ($e->getStatusCode() == '403' && $request->ajax()) {
+                return response()->json(
+                    [
+                        'status' => '无权限',
+                        'type' => 'error',
+                        'code' => 403,
+                    ]
+                );
+            }
+            else {
+                return $this->renderHttpException($e);
+            }
+        }
+        else
+        {
+            return parent::render($request, $e);
+        }
     }
 }

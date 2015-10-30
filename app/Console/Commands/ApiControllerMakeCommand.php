@@ -11,7 +11,7 @@ class ApiControllerMakeCommand extends CustomGeneratorCommand
      *
      * @var string
      */
-    protected $name = 'fjp:apicontroller';
+    protected $name = 'bl5:apicontroller';
 
     /**
      * The console command description.

@@ -2,29 +2,28 @@
 
 use Illuminate\Http\Request;
 use Kris\LaravelFormBuilder\FormBuilder;
-
 use App\Http\Controllers\Controller;
-use App\Repositories\RoleRepository as Role;
-use App\Http\Requests\RoleRequest;
+use App\Repositories\PermissionRepository as Permission;
+use App\Http\Requests\PermissionRequest;
 use Datatables;
 
-class RolesController extends Controller {
+class PermissionController extends Controller {
 
     /**
-     * Repostory role
+     * Repostory permission
      *
-     * @var RoleRepository
+     * @var PermissionRepository
      */
-    private $role;
+    private $permission;
 
     /**
      * Construc controller.
      *
-     * @param  Role $role
+     * @param  Permission $permission
      */
-    public function __construct(Role $role)
+    public function __construct(Permission $permission)
     {
-        $this->role = $role;
+        $this->permission = $permission;
     }
 
     /**
@@ -36,13 +35,14 @@ class RolesController extends Controller {
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            return Datatables::of($this->role->all())
-            ->addColumn('action', $this->role->action_butttons(['show','edit','delete']))
+            return Datatables::of($this->permission->all())
+            ->addColumn('action', function($model) { return $this->permission->action_butttons($model);})
             ->make(true);
         }
-        $html = $this->role->columns();
+        $html = $this->permission->columns();
         return view('datatable',compact('html'));
-    }        
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -52,9 +52,9 @@ class RolesController extends Controller {
      */
     public function create(FormBuilder $formBuilder)
     {
-        $form = $formBuilder->create('App\Forms\RoleForm', [
+        $form = $formBuilder->create('App\Forms\PermissionForm', [
             'method' => 'POST',
-            'url' => route('admin.roles.store')
+            'url' => route('admin.permissions.store')
         ]);
 
         return view('layout.partials.form', compact('form'));
@@ -63,18 +63,18 @@ class RolesController extends Controller {
     /**
      * Store a newly created resource in storage.
      *
-     * @param  RoleRequest  $request
+     * @param  PermissionRequest  $request
      * @return Response
      */
-    public function store(RoleRequest $request)
+    public function store(PermissionRequest $request)
     {
-        $role = $this->role->save(null, $request->all());
+        $permission = $this->permission->save(null, $request->all());
 
-        $route = ($request->get('task')=='apply') ? route('admin.roles.edit', $role->id) : route('admin.roles.index');
+        $route = ($request->get('task')=='apply') ? route('admin.permissions.edit', $permission->id) : route('admin.permissions.index');
 
         return redirect($route)->with([
-            'status' => trans('messages.saved'), 
-            'type-status' => 'success'
+            'status' => trans('messages.saved'),
+            'type' => 'success'
         ]);
     }
 
@@ -86,9 +86,9 @@ class RolesController extends Controller {
      */
     public function show($id)
     {
-        $role = $this->role->getModel()->findOrFail($id);
+        $permission = $this->permission->getModel()->findOrFail($id);
 
-        return view('roles.show', compact('role'));
+        return view('access.permission', compact('permission'));
     }
 
     /**
@@ -100,12 +100,12 @@ class RolesController extends Controller {
      */
     public function edit($id, FormBuilder $formBuilder)
     {
-        $role = $this->role->getModel()->findOrFail($id);
+        $permission = $this->permission->getModel()->findOrFail($id);
 
-        $form = $formBuilder->create('App\Forms\RoleForm', [
-            'model' => $role,
-            'method' => 'PATCH',
-            'url' => route('admin.roles.update', $id)
+        $form = $formBuilder->create('App\Forms\PermissionForm', [
+            'model' => $permission,
+            'method' => 'PUT',
+            'url' => route('admin.permissions.update', $id)
         ]);
 
         return view('layout.partials.form', compact('form'));
@@ -115,19 +115,18 @@ class RolesController extends Controller {
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @param  RoleRequest  $request
+     * @param  PermissionRequest  $request
      * @return Response
      */
-    public function update($id, RoleRequest $request)
+    public function update($id, PermissionRequest $request)
     {
-        // dd($request->all());
-        $this->role->save($id, $request->all());
+        $this->permission->save($id, $request->all());
 
-        $route = ($request->get('task')=='apply') ? route('admin.roles.edit', $id) : route('admin.roles.index');
+        $route = ($request->get('task')=='apply') ? route('admin.permissions.edit', $id) : route('admin.permissions.index');
 
         return redirect($route)->with([
             'status' => trans('messages.saved'), 
-            'type-status' => 'success'
+            'type' => 'success'
         ]);
     }
 
@@ -139,11 +138,12 @@ class RolesController extends Controller {
      */
     public function destroy($ids)
     {
-        $this->role->deleteAll(explode(',', $ids));
+        $this->permission->deleteAll(explode(',', $ids));
         return [
             'status' => trans('messages.delete.success'), 
-            'type-status' => 'success'
+            'type' => 'success'
         ];
     }
+
 
 }

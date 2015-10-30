@@ -33,7 +33,7 @@ class ArticleRequest extends Request {
         $messages =[
             'name' => '文章标题 ',
         ];
-        return array_merge(Lang::get('messages'),$messages);
+        return array_merge(Lang::get('messages'),$messages);//覆盖同名字段定义
     }
 
 

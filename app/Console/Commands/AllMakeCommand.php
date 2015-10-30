@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class AllMakeCommand extends Command
 {
@@ -12,7 +13,7 @@ class AllMakeCommand extends Command
      *
      * @var string
      */
-    protected $name = 'fjp:all';
+    protected $name = 'bl5:all';
 
     /**
      * The console command description.
@@ -39,9 +40,21 @@ class AllMakeCommand extends Command
      */
     protected function getArguments()
     {
-        return array(
-            array('name', InputArgument::REQUIRED, 'The name of resource'),
-        );
+        return [
+            ['name', InputArgument::REQUIRED, 'The name of resource']
+        ];
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['fields', null, InputOption::VALUE_OPTIONAL, 'Fields for the form and table migration', 'name:string']
+        ];
     }
 
     /**
@@ -53,19 +66,26 @@ class AllMakeCommand extends Command
     {
         $name = $this->getNameInput();
 
+        $fields = $this->option('fields');
+
+        $nameFirstUpper = ucfirst($name);
+        $nameFirstUpperSingular = str_singular($nameFirstUpper);
+
         //Create controller
-        $this->call('fjp:controller', ['name' => ucfirst($name).'Controller']);
+        $this->call('bl5:controller', ['name' => studly_case($nameFirstUpperSingular).'Controller']);
         //Create views
-        $this->call('fjp:views', ['name' => $name]);
+        $this->call('bl5:views', ['name' => str_replace("_","",$name)]);
         //Create request
-        $this->call('fjp:request', ['name' => str_singular(ucfirst($name)).'Request']);
+        $this->call('bl5:request', ['name' => studly_case($nameFirstUpperSingular).'Request']);
         //Create form
-        $this->call('fjp:form', ['name' => str_singular(ucfirst($name)).'Form']);
+        $this->call('bl5:form', ['name' => studly_case($nameFirstUpperSingular).'Form']);
         //Create repositroy
-        $this->call('fjp:repository', ['name' => str_singular(ucfirst($name)).'Repository']);
+        $this->call('bl5:repository', ['name' => studly_case($nameFirstUpperSingular).'Repository']);
         //Create model
-        $this->call('fjp:model', ['name' => str_singular(ucfirst($name))]);
+        $this->call('bl5:model', ['name' => studly_case($nameFirstUpperSingular)]);
         //Migration table
-        $this->call('make:migration:schema', ['name' => 'create_'.$name.'_table', '--schema' => 'name:string']);
+        $this->call('make:migration:schema', ['name' => 'create_'.$name.'_table', '--schema' => $fields, '--model' => 0]);
     }
+
+
 }

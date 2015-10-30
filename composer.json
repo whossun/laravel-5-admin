@@ -12,7 +12,8 @@
         "kris/laravel-form-builder": "^1.6",
         "yajra/laravel-datatables-oracle": "~5.0",
         "barryvdh/laravel-debugbar": "^2.0",
-        "davejamesmiller/laravel-breadcrumbs": "^3.0" 
+        "davejamesmiller/laravel-breadcrumbs": "^3.0",
+        "kalnoy/nestedset": "^3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

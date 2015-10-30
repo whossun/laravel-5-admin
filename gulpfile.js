@@ -41,6 +41,7 @@ elixir(function(mix) {
             paths.adminlte + "plugins/fastclick/fastclick.min.js",
             paths.adminlte + "dist/js/app.min.js",
             paths.sweetalert + "sweetalert.min.js",
+            bower + "jquery-fullscreen/jquery.fullscreen-min.js",
             "js/custom.js",
         ], 'public/js/theme.js', assets)
         .version(['css/theme.css','js/theme.js'])

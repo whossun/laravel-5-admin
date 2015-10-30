@@ -2,8 +2,12 @@
 
 @section('toolbars')
 <div class="toolbars">
+    @can($route['table'].'_create')
     <a class="btn btn-success btn-new"><i class="fa fa-fw fa-plus"></i>{{ trans('messages.new') }}</a>
+    @endcan
+    @can($route['table'].'_delete')
     <a class="btn btn-danger btn-remove hide"><i class="fa fa-fw fa-times"></i>{{ trans('messages.delete') }}</a>
+    @endcan
 </div>
 @stop
 

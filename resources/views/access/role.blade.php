@@ -1,7 +1,7 @@
 @extends('layout.partials.show')
 
 @section('name')
-    {{ $role->label }}
+    {{ $role->display_name }}
 @stop
 
 @section('show')

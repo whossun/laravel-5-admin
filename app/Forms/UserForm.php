@@ -1,13 +1,13 @@
 <?php namespace App\Forms;
 
 use Kris\LaravelFormBuilder\Form;
-use App\Role;
+use App\Models\Role;
 
 class UserForm extends Form
 {
     protected function getRoles()
     {
-        return Role::lists('label', 'id')->toArray();
+        return Role::lists('display_name', 'id')->toArray();
     }
 
     protected function getRolesSelected()

@@ -1,24 +1,14 @@
 <?php namespace App\Repositories;
 
-use Illuminate\Http\Request;
-use App\Role;
+use App\Models\Role;
 
-class RoleRepository extends Repository 
+class RoleRepository extends Repository
 {
-
-    protected $datatable_fields = [
-        'id'         => ['orderable' => true,'searchable' => false],
-        'name'      => ['orderable' => true,'searchable' => true],
-        'label'        => ['orderable' => true,'searchable' => true],
-        'created_at' => ['orderable' => true,'searchable' => false],
-        'updated_at' => ['orderable' => true,'searchable' => false],
-    ];
 
     public function __construct(Role $role)
     {
         $this->model = $role;
     }
-
 
     public function save($id, $data)
     {
@@ -31,5 +21,5 @@ class RoleRepository extends Repository
 
         return $role;
     }
-    
+
 }

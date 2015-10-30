@@ -22,11 +22,8 @@ abstract class CustomGeneratorCommand extends GeneratorCommand
     protected function buildClass($name)
     {
         $this->setMoreInfo($name);
-
         $stub = $this->files->get($this->getStub());
-
         $stub = $this->replaceModel($stub, $name);
-
         return $this->replaceNamespace($stub, $name)->replaceClass($stub, $name);
     }
 
@@ -53,9 +50,9 @@ abstract class CustomGeneratorCommand extends GeneratorCommand
         $info = $this->getMoreInfo();
 
         $info  = str_replace('{{Model}}', ucfirst($model), $info);
-        $info  = str_replace('{{Models}}', str_plural(ucfirst($model)), $info);
+        $info  = str_replace('{{Models}}', ucfirst($model), $info);
         $info  = str_replace('{{model}}', str_singular($model), $info);
-        $info  = str_replace('{{models}}', str_plural($model), $info);
+        $info  = str_replace('{{models}}', strtolower(str_plural($model)), $info);
 
         $this->more_info = $info;
     }
@@ -70,8 +67,7 @@ abstract class CustomGeneratorCommand extends GeneratorCommand
     {
         $model = str_replace($this->getNamespace($name).'\\', '', $name);
         $model = str_replace($this->type, '', $model);
-        $model = strtolower((str_singular($model)));
-
+        // $model = strtolower((str_singular($model)));
         return $model;
     }
 
@@ -85,10 +81,9 @@ abstract class CustomGeneratorCommand extends GeneratorCommand
     protected function replaceModel($stub, $name)
     {
         $model = $this->getModel($name);
-
         $stub  = str_replace('{{Model}}', ucfirst($model), $stub);
-        $stub  = str_replace('{{model}}', str_singular($model), $stub);
-        $stub  = str_replace('{{models}}', str_plural($model), $stub);
+        $stub  = str_replace('{{model}}', str_singular(strtolower($model)), $stub);
+        $stub  = str_replace('{{models}}', str_plural(strtolower($model)), $stub);
 
         return $stub;
     }
@@ -96,7 +91,7 @@ abstract class CustomGeneratorCommand extends GeneratorCommand
     /**
      * Print more info
      *
-     * @return void  
+     * @return void 
      */
     public function moreInfo()
     {
@@ -113,17 +108,12 @@ abstract class CustomGeneratorCommand extends GeneratorCommand
     public function fire()
     {
         $name = $this->parseName($this->getNameInput());
-
         if ($this->files->exists($path = $this->getPath($name))) {
             return $this->error($this->type.' already exists!');
         }
-
         $this->makeDirectory($path);
-
         $this->files->put($path, $this->buildClass($name));
-
         $this->info($this->type.' created successfully.');
-
         $this->moreInfo();
     }
 }

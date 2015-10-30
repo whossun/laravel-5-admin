@@ -1,6 +1,4 @@
-<?php
-
-namespace App\Console\Commands;
+<?php namespace App\Console\Commands;
 
 use App\Console\Commands\CustomGeneratorCommand;
 
@@ -11,7 +9,7 @@ class RepositoryMakeCommand extends CustomGeneratorCommand
      *
      * @var string
      */
-    protected $name = 'fjp:repository';
+    protected $name = 'bl5:repository';
 
     /**
      * The console command description.

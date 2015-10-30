@@ -1,6 +1,4 @@
-<?php
-
-namespace App\Console\Commands;
+<?php namespace App\Console\Commands;
 
 use App\Console\Commands\CustomGeneratorCommand;
 
@@ -11,7 +9,7 @@ class ModelMakeCommand extends CustomGeneratorCommand
      *
      * @var string
      */
-    protected $name = 'fjp:model';
+    protected $name = 'bl5:model';
 
     /**
      * The console command description.
@@ -45,6 +43,6 @@ class ModelMakeCommand extends CustomGeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace;
+        return $rootNamespace.'\Models';
     }
 }

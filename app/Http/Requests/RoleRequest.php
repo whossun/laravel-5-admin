@@ -23,7 +23,7 @@ class RoleRequest extends Request
     {
         return [
             'name' => 'required',
-            'label' => 'required'
+            'display_name' => 'required'
         ];
     }
 }

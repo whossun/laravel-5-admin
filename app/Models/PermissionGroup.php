@@ -1,8 +1,8 @@
-<?php namespace DummyNamespace;
+<?php namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DummyClass extends Model {
+class PermissionGroup extends Model {
 
     protected $fillable = ['name'];
 
@@ -12,5 +12,7 @@ class DummyClass extends Model {
         'created_at'   => ['orderable' => true,'searchable' => false],
         'updated_at'   => ['orderable' => true,'searchable' => false],
     ];
+
+    public $route_resource = 'permissiongroups';
 
 }

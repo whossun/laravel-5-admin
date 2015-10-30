@@ -93,9 +93,9 @@ $(document).ready(function (){
                 dataType: 'json',
                 success: function(data) {
                     swal({
-                        title: "{{ trans('messages.delete.success') }}!",
+                        title: data.status,
                         text: "{{ trans('messages.autoclose') }}!",
-                        type: "success",
+                        type: data.type,
                         timer: 1000,
                         showConfirmButton: false
                     });
@@ -127,9 +127,14 @@ $(document).ready(function (){
     //http://www.gyrocode.com/articles/jquery-datatables-checkboxes/
     function updateDataTableSelectAllCtrl(table){
        var $table             = table.table().node();
-       var $chkbox_all        = $('tbody input[type="checkbox"]', $table);
-       var $chkbox_checked    = $('tbody input[type="checkbox"]:checked', $table);
+       var $chkbox_all        = $('tbody input[type="checkbox"]:not(:disabled)', $table);
+       var $chkbox_checked    = $('tbody input[type="checkbox"]:checked:not(:disabled)', $table);
        var chkbox_select_all  = $('thead input[name="select_all"]', $table).get(0);
+       if($chkbox_all.length === 0){
+            $('thead input[name="select_all"]').prop("disabled", true);
+       }else{
+            $('thead input[name="select_all"]').prop("disabled", false);
+       }
        $('.btn-remove').removeClass('hide');
        // If none of the checkboxes are checked
        if($chkbox_checked.length === 0){
@@ -154,7 +159,7 @@ $(document).ready(function (){
     }
 
     // Handle click on checkbox
-    $('#dt-table tbody').on('click', 'input[type="checkbox"]', function(e){
+    $('#dt-table tbody').on('click', 'input[type="checkbox"]:not(:disabled)', function(e){
         var $row = $(this).closest('tr');
         // Get row data
         var data = table.row($row).data();

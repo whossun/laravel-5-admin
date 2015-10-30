@@ -1,11 +1,5 @@
 @extends('layout.partials.table')
 
-@section('filters')
-    <div class="col-md-offset-8 col-md-4">
-        @include('layout.partials.filters.search')
-    </div>
-@stop
-
 @section('table')
     <tr>
         <th class="text-center" width="1"><input type="checkbox" name="chb-all" id="chb-all" /></th>

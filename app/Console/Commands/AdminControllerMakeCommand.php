@@ -11,7 +11,7 @@ class AdminControllerMakeCommand extends CustomGeneratorCommand
      *
      * @var string
      */
-    protected $name = 'fjp:controller';
+    protected $name = 'bl5:controller';
 
     /**
      * The console command description.
@@ -33,11 +33,30 @@ class AdminControllerMakeCommand extends CustomGeneratorCommand
      * @var string
      */
     protected $more_info = "
-	Add routes in app/Http/routes.php into group admin
-	//{{Models}}
-	Route::resource('{{models}}', 'Admin\{{Models}}Controller');
-	Route::post('{{models}}/delete', array('as' => 'admin.{{models}}.delete', 'uses' => 'Admin\{{Models}}Controller@delete'));
-	";
+Add routes in app/Http/routes.php into group admin
+
+//{{Models}}
+Route::resource('{{models}}', '{{Models}}Controller');
+
+
+Add menu in array menus in config/menus.php :
+
+'{{models}}' => [
+    'permission' => '{{models}}_view',
+    'icon' => 'fa-file-o',
+    'edit' => true,
+    'name' => 'messages.{{models}}'
+],
+
+
+Add custom messages in resources/lang/zh/messages.php
+
+'{{models}}' => '{{models}}',
+
+Migrate {{models}}
+
+php artisan migrate
+";
 
     /**
      * Get the stub file for the generator.

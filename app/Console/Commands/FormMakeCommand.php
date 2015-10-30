@@ -11,7 +11,7 @@ class FormMakeCommand extends CustomGeneratorCommand
      *
      * @var string
      */
-    protected $name = 'fjp:form';
+    protected $name = 'bl5:form';
 
     /**
      * The console command description.

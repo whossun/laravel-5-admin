@@ -11,7 +11,7 @@ class RequestMakeCommand extends CustomGeneratorCommand
      *
      * @var string
      */
-    protected $name = 'fjp:request';
+    protected $name = 'bl5:request';
 
     /**
      * The console command description.

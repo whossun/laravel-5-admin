@@ -1,34 +1,12 @@
 <?php namespace DummyNamespace;
 
-use Illuminate\Http\Request;
-use DummyRootNamespace{{Model}};
+use DummyRootNamespaceModels\{{Model}};
 
 class DummyClass extends Repository {
 
-    protected $order_fields = [
-        'id',
-        'name',
-        'created_at'
-    ];
-
-    public function __construct({{Model}} ${{model}}, $paginate=true)
+    public function __construct({{Model}} ${{model}})
     {
         $this->model = ${{model}};
     }
 
-    public function search(Request $request, $paginate=true)
-    {
-        $query = $this->order($request->all());
-
-        if ($request->has('search'))
-        {
-            $search = $request->get('search');
-
-            $query->where('{{models}}.id', 'LIKE', '%' . $search . '%')
-                ->orWhere('{{models}}.name', 'LIKE', '%' . $search . '%')
-            ;
-        }
-
-        return ($paginate) ? $query->paginate($request->get('limit', config('custom.paginate'))) : $query->get();
-    }
 }

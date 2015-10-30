@@ -17,7 +17,7 @@ composer config -g repositories.packagist composer http://packagist.phpcomposer.
 
 - Bower
 ```
-npm install -g bower   
+npm install -g bower
 ```
 >  查看版本：`bower -v`
 
@@ -28,25 +28,6 @@ npm install -g gulp
 - [Git](https://git-scm.com/download/win)
 - [SourceTree](https://www.sourcetreeapp.com/download/)
 
-###Git项目初始化
-```
-git clone https://github.com/zxishere/laravel-5-admin.git projectname
-cd projectname
-rd /s /q  .git
-copy .env.example .env
-composer install
-composer update
-bower install
-
-npm install
-gulp
-php artisan key:generate
-php artisan migrate
-php artisan db:seed
-```
-> npm install -g nrm
-使用nrm test指令测试那个npm源对你的延迟最小
-nrm use taobao便可切换到taobao源
 
 ##Homestead
 
@@ -69,14 +50,13 @@ nrm use taobao便可切换到taobao源
 192.168.10.10   project.app
 192.168.10.10   phpmyadmin.app
 
-###Git项目初始化
+
+###Git项目初始化 (Windows)
 ```
-cd Code
 git clone https://github.com/zxishere/laravel-5-admin.git projectname
 cd projectname
-rm -rf .git
-cp .env.example .env
-composer config -g repositories.packagist composer http://packagist.phpcomposer.com
+rd /s /q  .git
+copy .env.example .env
 composer install
 composer update
 
@@ -85,16 +65,23 @@ php artisan migrate
 php artisan db:seed
 ```
 
+###Git项目初始化（Homestead）
+删除git文件夹 `rm -rf .git`
+复制配置文件 `cp .env.example .env`
+
+
 ###前端依赖
 ```
 bower install
-npm install
+npm cache clean
+rm -rf node_modules
+sudo npm install --global gulp
+npm install --no-bin-links
 gulp
 ```
 > npm install -g nrm
 使用nrm test指令测试那个npm源对你的延迟最小
 nrm use taobao便可切换到taobao源
-
 
 ##常用命令
 
@@ -103,7 +90,7 @@ nrm use taobao便可切换到taobao源
 composer update
 composer install
 composer dump-autoload
-composer self-update 
+composer self-update
 
 composer diagnose
 ```
@@ -113,7 +100,7 @@ composer diagnose
 
 ###测试环境
 ```
-php artisan fjp:all articles
+php artisan bl5:all articles
 php artisan tinker
 factory(App\Article::class, 1000)->create();
 
@@ -135,18 +122,18 @@ bower install font-awesome  --save
 bower install ionicons  --save
 bower install datatables  --save
 bower uninstall bootbox.js --save
-bower install admin-lte#latest --save 
+bower install admin-lte#latest --save
 ```
 
-###Git 
+###Git
 ```
 git config --global user.name "Hiro-PC"
 git config --global user.email zxishere@gmail.com
 git remote -v
 git remote add xxx https:xxx.git
+git pull
+git push
 ```
-
-
 
 ###Linux常用命令
 

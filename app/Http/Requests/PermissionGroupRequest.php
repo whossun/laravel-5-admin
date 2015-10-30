@@ -1,8 +1,8 @@
-<?php namespace DummyNamespace;
+<?php namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
 
-class DummyClass extends Request {
+class PermissionGroupRequest extends Request {
 
     public function authorize()
     {

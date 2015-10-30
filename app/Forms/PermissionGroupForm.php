@@ -2,13 +2,12 @@
 
 use Kris\LaravelFormBuilder\Form;
 
-class PermissionForm extends Form
+class PermissionGroupForm extends Form
 {
     public function buildForm()
     {
         $this
             ->add('name', 'text', ['label' => trans('messages.name')])
-            ->add('display_name', 'text', ['label' => trans('messages.label')])
             ->add('task', 'hidden')
         ;
     }

@@ -13,7 +13,7 @@ class ViewsControllerMakeCommand extends Command
      *
      * @var string
      */
-    protected $name = 'fjp:views';
+    protected $name = 'bl5:views';
 
     /**
      * The console command description.
@@ -131,7 +131,6 @@ class ViewsControllerMakeCommand extends Command
      */
     public function fire()
     {
-        $this->createView('index');
         $this->createView('show');
     }
 }

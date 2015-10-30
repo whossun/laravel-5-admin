@@ -1,5 +1,9 @@
 <?php
 
+Route::get('/', function () {
+    return '前台首页';
+});
+
 //Login
 Route::controllers([
     'auth' => 'Auth\AuthController',
@@ -13,24 +17,29 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 
     Route::get('/', array('as' => 'admin.dashboard.index', 'uses' => 'DashboardController@index'));
 
     //Users
-    Route::resource('users', 'UsersController');
+    Route::resource('users', 'UserController');
 
     //Roles
-    Route::resource('roles', 'RolesController');
+    Route::resource('roles', 'RoleController');
 
     //Permissions
-    Route::resource('permissions', 'PermissionsController');
+    Route::resource('permissions', 'PermissionController');
+
+    //PermissionGroup
+    Route::resource('permissiongroups', 'PermissionGroupController');
 
     //Articles
-    Route::resource('articles', 'ArticlesController');
+    Route::resource('articles', 'ArticleController');
 
     //Settings
-    Route::resource('settings', 'SettingsController');
+    Route::resource('settings', 'SettingController');
 
+    //Test
+    Route::resource('tests', 'TestController');
 });
 
 //Api
 Route::group(array('prefix' => 'api', 'middleware' => 'allowOrigin'), function () {
     //Users
-    Route::resource('users', 'Api\UsersController', ['only' => ['index', 'show']]);
+    Route::resource('users', 'Api\UserController', ['only' => ['index', 'show']]);
 });

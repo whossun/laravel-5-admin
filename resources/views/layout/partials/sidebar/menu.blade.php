@@ -13,7 +13,7 @@
         </li>
         @endcan
     @endforeach
-    <li class="header">TEST</li>    
+    <li class="header">TEST</li>
 <li class="treeview">
               <a href="#">
                 <i class="fa fa-table"></i> <span>Tables</span>
@@ -34,5 +34,5 @@
 
 
     <li class="header">SYSTEM</li>
-    <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>    
+    <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
 </ul>

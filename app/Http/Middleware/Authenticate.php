@@ -14,6 +14,13 @@ class Authenticate
      */
     protected $auth;
 
+    protected $permission_fields = [
+        'view'   => ['index','show'],
+        'create' => ['create','store'],
+        'update' => ['edit','update'],
+        'delete' => ['destroy'],
+    ];
+
     /**
      * Create a new filter instance.
      *
@@ -36,9 +43,30 @@ class Authenticate
     {
         if ($this->auth->guest()) {
             if ($request->ajax()) {
-                return response('Unauthorized.', 401);
+                return response('Unauthorized.', 403);
             } else {
                 return redirect()->guest('auth/login');
+            }
+        }
+        $route_array = explode('.', $request->route()->getName());
+        $permission_name = array_search($route_array[2],array_dot($this->permission_fields));
+        if($permission_name){
+            $route_array[2] =  explode('.', $permission_name)[0];
+        }
+        // $route_name = implode('_', $route_array);
+        $route_name = $route_array[1].'_'.$route_array[2];
+        if (!$request->user()->isAdmin() && $request->user()->cannot($route_name)) { //PATCH 为null
+            if ($request->ajax()) {
+                return response()->json(
+                    [
+                        'status' => '无权限',
+                        'type' => 'error',
+                        'code' => 403,
+                    ]
+                );
+            }
+            else {
+                return view('errors.403');
             }
         }
 
