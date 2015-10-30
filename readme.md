@@ -42,7 +42,7 @@ npm install -g gulp
 修改完Homestead.yaml后，务必运行下面命令以使配置生效：
 `homestead provision`
 
-- 启动Homestead  `homestead up` 关机 `homestead halt` 终端进入`homestead ssh`
+- 启动Homestead  `homestead up` 关机 `homestead halt` 终端进入`homestead ssh` 编辑配置 `homestead edit`
 
 
 - 编辑Host文件
