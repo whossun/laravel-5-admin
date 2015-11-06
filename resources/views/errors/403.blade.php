@@ -1,7 +1,7 @@
 @extends('layout.backend')
 
 @section('title')
-   无权限
+   {{trans('messages.permission_denied')}}
 @stop
 
 @section('contenttitle')
@@ -14,7 +14,7 @@
     <br>
     <div class="error-content">
         <h3> <i class="fa fa-warning text-yellow"></i>
-            无权限
+            {{trans('messages.permission_denied')}}
         </h3>
         <p>
             如有疑问请联系管理员。<br>

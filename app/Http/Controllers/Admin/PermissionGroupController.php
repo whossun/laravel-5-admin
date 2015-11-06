@@ -4,7 +4,9 @@ use Illuminate\Http\Request;
 use Kris\LaravelFormBuilder\FormBuilder;
 use App\Http\Controllers\Controller;
 use App\Repositories\PermissionGroupRepository as PermissionGroup;
-use App\Http\Requests\PermissionGroupRequest;
+use App\Http\Requests\PermissionGroup\PermissionGroupRequest;
+use App\Http\Requests\PermissionGroup\SortPermissionGroupRequest;
+
 use Datatables;
 
 class PermissionGroupController extends Controller {
@@ -16,29 +18,35 @@ class PermissionGroupController extends Controller {
         $this->permissiongroup = $permissiongroup;
     }
 
+
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            return Datatables::of($this->permissiongroup->all())
-            ->addColumn('action', function($model) { return $this->permissiongroup->action_butttons($model);})
-            ->make(true);
-        }
-        $html = $this->permissiongroup->columns();
-        return view('datatable',compact('html'));
+        $groups      = $this->permissiongroup->getAllGroups();
+        $groups_tree =  $this->permissiongroup->getTree($groups);
+        $groups_hierarchy =  $this->permissiongroup->getHierarchy($groups);
+        if ($request->ajax())
+            return $groups_tree;
+        return view('rbac.permissiongroups', compact('groups_hierarchy','groups_tree'));
     }
 
-    public function create(FormBuilder $formBuilder)
+    public function create(Request $request,FormBuilder $formBuilder)
     {
         $form = $formBuilder->create('App\Forms\PermissionGroupForm', [
             'method' => 'POST',
             'url' => route('admin.permissiongroups.store')
         ]);
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
     public function store(PermissionGroupRequest $request)
     {
         $permissiongroup = $this->permissiongroup->save(null, $request->all());
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }
         $route = ($request->get('task')=='apply') ? route('admin.permissiongroups.edit', $permissiongroup->id) : route('admin.permissiongroups.index');
         return redirect($route)->with([
             'status' => trans('messages.saved'),
@@ -46,39 +54,60 @@ class PermissionGroupController extends Controller {
         ]);
     }
 
-    public function show($id)
+    public function edit($id, Request $request, FormBuilder $formBuilder)
     {
-        $permissiongroup = $this->permissiongroup->getModel()->findOrFail($id);
-        return view('permissiongroups.show', compact('permissiongroup'));
-    }
-
-    public function edit($id, FormBuilder $formBuilder)
-    {
-        $permissiongroup = $this->permissiongroup->getModel()->findOrFail($id);
+        $permissiongroup = $this->permissiongroup->find($id);
         $form = $formBuilder->create('App\Forms\PermissionGroupForm', [
-            'model' => $permissiongroup,
-            'method' => 'PUT',
-            'url' => route('admin.permissiongroups.update', $id)
+            'model'        => $permissiongroup,
+            'method'       => 'PUT',
+            'autocomplete' => 'off',
+            'url'          => route('admin.permissiongroups.update', $id)
         ]);
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
     public function update($id, PermissionGroupRequest $request)
     {
-        $this->permissiongroup->save($id, $request->all());
+        $this->permissiongroup->update($id, $request->all());
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }
         $route = ($request->get('task')=='apply') ? route('admin.permissiongroups.edit', $id) : route('admin.permissiongroups.index');
         return redirect($route)->with([
             'status' => trans('messages.saved'),
-            'type-status' => 'success'
+            'type' => 'success'
         ]);
     }
 
-    public function destroy($ids)
+    public function updateSort(SortPermissionGroupRequest $request) {
+        $this->permissiongroup->updateSort($request->get('data'));
+        return response()->json(['status' => 'OK']);
+    }
+
+    public function destroy($id)
     {
-        $this->permissiongroup->deleteAll(explode(',', $ids));
+        if($this->permissiongroup->find($id)->permissions->count()){
+            return [
+                'status' => trans('messages.permission_delete_error'),
+                'text' => trans('messages.permission_delete_messages'),
+                'type' => 'error',
+            ];
+        }
+        if($this->permissiongroup->find($id)->children->count()){
+            return [
+                'status' => trans('messages.group_delete_error'),
+                'text' => trans('messages.group_delete_messages'),
+                'type' => 'error',
+            ];
+        }
+        $this->permissiongroup->deleteAll($id);
         return [
             'status' => trans('messages.delete.success'),
-            'type' => 'success'
+            'text' => trans('messages.autoclose'),
+            'type' => 'success',
         ];
     }
 

@@ -45,7 +45,7 @@ class DummyClass extends Controller {
      */
     public function show($id)
     {
-        ${{model}} = $this->{{model}}->getModel()->findOrFail($id);
+        ${{model}} = $this->{{model}}->find($id);
 
         return ${{model}};
     }

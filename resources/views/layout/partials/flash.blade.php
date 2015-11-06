@@ -1,12 +1,8 @@
 @if (session('status'))
     <script type="text/javascript">
-    swal({
-        title: "{{ session('status') }}.",
-		text:"{{ trans('messages.autoclose') }}",
-        //html: true,
-        type: "{{ session('type-status', 'success') }}",
-        timer: 1000,
-        showConfirmButton: false
-    });
+    toastr.options.timeOut = 1000;
+    toastr.options.fadeOut = 250;
+    toastr.options.fadeIn = 250;
+    toastr["{{ session('type-status', 'success') }}"]("{{ trans('messages.autoclose') }}","{{ session('status') }}.");
     </script>
 @endif

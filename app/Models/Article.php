@@ -5,30 +5,17 @@ use Jenssegers\Date\Date;
 
 class Article extends Model {
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = ['name','description','content','author'];
 
+    //className参考：https://datatables.net/extensions/responsive/examples/display-control/classes.html
     public $datatable_fields = [
         'id'          => ['orderable' => true,'searchable' => false],
         'name'        => ['orderable' => true,'searchable' => true],
-        'description' => ['orderable' => true,'searchable' => true],
+        'description' => ['orderable' => true,'searchable' => true, 'className' => "desktop"],
         'author'      => ['orderable' => true,'searchable' => true],
-        'created_at'  => ['orderable' => true,'searchable' => false],
-        'updated_at'  => ['orderable' => true,'searchable' => false],
+        'created_at'  => ['orderable' => true,'searchable' => false, 'className' => "desktop"],
+        'updated_at'  => ['orderable' => true,'searchable' => false, 'className' => "desktop" ],
     ];
-    /**
-     * Get the created date
-     *
-     * @return string
-     */
-    public function getCreatedAttribute()
-    {
-        return Date::parse($this->created_at)->format('d-m-Y');
-    }
 
     public function user()
     {

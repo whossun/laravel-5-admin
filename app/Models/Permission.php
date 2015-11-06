@@ -10,32 +10,29 @@ class Permission extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'display_name'];
+    protected $fillable = ['group_id','name', 'display_name','sort'];
 
     public $datatable_fields = [
         'id'           => ['orderable' => false,'searchable' => false],
         'name'         => ['orderable' => false,'searchable' => false],
         'display_name' => ['orderable' => false,'searchable' => false],
-        'created_at'   => ['orderable' => true,'searchable' => false],
+        'group_id'     => ['orderable' => true,'searchable' => false],
+        'sort'         => ['orderable' => false,'searchable' => false],
         'updated_at'   => ['orderable' => true,'searchable' => false],
     ];
 
-    /**
-     * Get the created date
-     *
-     * @return string
-     */
-    public function getCreatedAttribute()
-    {
-        return Date::parse($this->created_at)->format('d-m-Y');
-    }
-
-    /**
-     * Roles relation
-     * @return Roles
-     */
     public function roles()
     {
         return $this->belongsToMany(Role::class);
     }
+
+    public function group() {
+        return $this->belongsTo(PermissionGroup::class, 'group_id');
+    }
+
+    public function dependencies() {
+        return $this->hasMany(PermissionDependency::class, 'permission_id', 'id');
+    }
+
+
 }

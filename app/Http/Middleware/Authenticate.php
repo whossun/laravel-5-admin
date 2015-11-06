@@ -59,7 +59,7 @@ class Authenticate
             if ($request->ajax()) {
                 return response()->json(
                     [
-                        'status' => '无权限',
+                        'status' => trans('messages.permission_denied'),
                         'type' => 'error',
                         'code' => 403,
                     ]

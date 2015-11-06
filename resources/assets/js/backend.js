@@ -1,5 +1,5 @@
 /**
- * custom.js [v1.1.0]
+ * custom.js [v1.0.0]
  *
  * Editor: Hiro
  */
@@ -65,7 +65,22 @@ var AdminLTEOptions = {
     animationSpeed: 100,
  };
 
+
+
 $(function() {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+        },
+        error   : function ( jqXhr, json, errorThrown ){
+            var errors = jqXhr.responseJSON;
+            var errorsHtml= '';
+            $.each( errors, function( key, value ) {
+                errorsHtml += '<li>' + value[0] + '</li>';
+            });
+            toastr.error( errorsHtml , "Error " + jqXhr.status +': '+ errorThrown);
+        }
+    });
 
     check_sidebar();
 
@@ -77,9 +92,16 @@ $(function() {
 
     $('.fullscreen-toggle').click(function(e) {
         e.preventDefault();
-        $(document).toggleFullScreen();
-        $(this).find('i').toggleClass('ion-arrow-expand ion-arrow-shrink')
+        if (screenfull.enabled) {
+            screenfull.toggle();
+        }
     });
+
+    if (screenfull.enabled) {
+        document.addEventListener(screenfull.raw.fullscreenchange, function () {
+            $('.fullscreen-toggle').find('i').toggleClass('ion-arrow-expand ion-arrow-shrink')
+        });
+    }
 
 
 	$('#frmModel .btn-apply').click(function(e){
@@ -93,10 +115,10 @@ $(function() {
         $('#frmModel form').submit();
     });
 
-    $("select").each(function(index) {
+/*    $("select").each(function(index) {
         var id = $(this).attr('id');
         if (id) $('#'+id).selectize();
-    });
+    });*/
 
     $.extend( true, $.fn.dataTable.defaults, {
         language: {
@@ -129,12 +151,28 @@ $(function() {
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-5'i><'col-sm-7'p>>",
         processing: true,
-        serverSide: true,   
-        lengthMenu: [ 10, 20, 50, 100 ],  
-        pageLength: 20,  
+        serverSide: true,
+        lengthMenu: [ 10, 20, 50, 100 ],
+        pageLength: 20,
 /*        "searching": false,
         "ordering": false*/
     } );
 
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "onclick": null,
+        "showDuration": "400",
+        "hideDuration": "1000",
+        "timeOut": "2000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
 
 });

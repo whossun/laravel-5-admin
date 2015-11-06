@@ -17,7 +17,9 @@ class ComposerServiceProvider extends ServiceProvider
         view()->composer('layout.partials.table', 'App\Composers\RouteComposer');
         view()->composer('layout.partials.datatable', 'App\Composers\RouteComposer');
         view()->composer('layout.partials.form', 'App\Composers\RouteComposer');
+        view()->composer('layout.partials.ajax_form', 'App\Composers\RouteComposer');
         view()->composer('layout.partials.show', 'App\Composers\RouteComposer');
+        view()->composer('rbac.permissiongroups', 'App\Composers\RouteComposer');
 
         view()->composer('layout.partials.nav.profile', 'App\Composers\AuthComposer');
         view()->composer('layout.partials.sidebar.user', 'App\Composers\AuthComposer');

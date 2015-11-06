@@ -7,3 +7,4 @@
 @section('show')
     @include('layout.partials.fields.text', ['label' => trans('messages.name'), 'field' => $permission->name])
 @stop
+

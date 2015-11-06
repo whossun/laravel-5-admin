@@ -31,11 +31,9 @@ class CreateRolesTable extends Migration
 
         Schema::create('permission_groups', function ($table) {
             $table->increments('id')->unsigned();
+            $table->integer('parent_id')->nullable();
             $table->string('name');
-            $table->unsignedInteger('_lft');
-            $table->unsignedInteger('_rgt');
-            $table->unsignedInteger('parent_id')->nullable();
-            $table->index([ '_lft', '_rgt', 'parent_id' ]);
+            $table->smallInteger('sort')->default(0);
             $table->timestamps();
         });
 

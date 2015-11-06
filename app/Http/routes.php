@@ -26,7 +26,8 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 
     Route::resource('permissions', 'PermissionController');
 
     //PermissionGroup
-    Route::resource('permissiongroups', 'PermissionGroupController');
+    Route::resource('permissiongroups', 'PermissionGroupController', ['except' => ['show']]);
+    Route::post('permissiongroups/update-sort', array('as' => 'admin.permissiongroups.update_sort', 'uses' => 'PermissionGroupController@updateSort'));
 
     //Articles
     Route::resource('articles', 'ArticleController');

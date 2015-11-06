@@ -4,138 +4,91 @@ use Illuminate\Http\Request;
 use Kris\LaravelFormBuilder\FormBuilder;
 use App\Http\Controllers\Controller;
 use App\Repositories\PermissionRepository as Permission;
+use App\Repositories\PermissionGroupRepository as PermissionGroup;
 use App\Http\Requests\PermissionRequest;
 use Datatables;
 
 class PermissionController extends Controller {
 
-    /**
-     * Repostory permission
-     *
-     * @var PermissionRepository
-     */
     private $permission;
 
-    /**
-     * Construc controller.
-     *
-     * @param  Permission $permission
-     */
-    public function __construct(Permission $permission)
+    public function __construct(Permission $permission,PermissionGroup $permissiongroup)
     {
         $this->permission = $permission;
+        $this->permissiongroup = $permissiongroup;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
             return Datatables::of($this->permission->all())
             ->addColumn('action', function($model) { return $this->permission->action_butttons($model);})
+            ->editColumn('group_id', function($model) { if($model->group){return $model->group->name;}})
             ->make(true);
         }
         $html = $this->permission->columns();
         return view('datatable',compact('html'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @param  FormBuilder  $formBuilder
-     * @return Response
-     */
-    public function create(FormBuilder $formBuilder)
+    public function create(Request $request, FormBuilder $formBuilder)
     {
         $form = $formBuilder->create('App\Forms\PermissionForm', [
             'method' => 'POST',
             'url' => route('admin.permissions.store')
         ]);
-
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  PermissionRequest  $request
-     * @return Response
-     */
     public function store(PermissionRequest $request)
     {
         $permission = $this->permission->save(null, $request->all());
-
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }
         $route = ($request->get('task')=='apply') ? route('admin.permissions.edit', $permission->id) : route('admin.permissions.index');
-
         return redirect($route)->with([
             'status' => trans('messages.saved'),
             'type' => 'success'
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
     public function show($id)
     {
-        $permission = $this->permission->getModel()->findOrFail($id);
+        $permission = $this->permission->find($id);
 
-        return view('access.permission', compact('permission'));
+        return view('rbac.permission', compact('permission'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @param  FormBuilder  $formBuilder
-     * @return Response
-     */
-    public function edit($id, FormBuilder $formBuilder)
+    public function edit($id, Request $request, FormBuilder $formBuilder)
     {
-        $permission = $this->permission->getModel()->findOrFail($id);
+        $permission = $this->permission->find($id);
 
         $form = $formBuilder->create('App\Forms\PermissionForm', [
             'model' => $permission,
             'method' => 'PUT',
             'url' => route('admin.permissions.update', $id)
         ]);
-
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @param  PermissionRequest  $request
-     * @return Response
-     */
     public function update($id, PermissionRequest $request)
     {
         $this->permission->save($id, $request->all());
-
-        $route = ($request->get('task')=='apply') ? route('admin.permissions.edit', $id) : route('admin.permissions.index');
-
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }        $route = ($request->get('task')=='apply') ? route('admin.permissions.edit', $id) : route('admin.permissions.index');
         return redirect($route)->with([
-            'status' => trans('messages.saved'), 
+            'status' => trans('messages.saved'),
             'type' => 'success'
         ]);
     }
 
-    /**
-     * Remove  resources from storage.
-     *
-     * @param  array  $id
-     * @return Response
-     */
     public function destroy($ids)
     {
         $this->permission->deleteAll(explode(',', $ids));

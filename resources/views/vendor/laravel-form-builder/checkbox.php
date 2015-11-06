@@ -6,7 +6,6 @@
 
 <?php if ($showField): ?>
     <?= Form::checkbox($name, $options['value'], $options['checked'], $options['attr']) ?>
-
     <?php include 'help_block.php' ?>
 <?php endif; ?>
 

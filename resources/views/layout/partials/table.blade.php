@@ -1,70 +1,5 @@
 @extends('layout.backend')
 
-@section('scripts')
-<script type="text/javascript">
-    $(function() {
-
-        $('.btn-remove').click(function(e) {
-            e.preventDefault();
-            bootbox.dialog({
-              message: "{{ trans('messages.'.$route['table'].'.delete.message') }}",
-              title: "{{ trans('messages.'.$route['table'].'.delete.title') }}",
-                buttons: {
-                    success: {
-                        label: "{{ trans('messages.yes') }}",
-                        className: "btn-primary",
-                        callback: function() {
-                            frmList.submit();
-                        }
-                    },
-                    danger: {
-                        label: "{{ trans('messages.no') }}",
-                        className: "btn-default",
-                    },
-              }
-            });
-        });
-
-        $('.btn-new').click(function(e) {
-            e.preventDefault();
-            alert('fff');
-            window.location.href = '{{ url(Request::path()) }}/create';
-        });     
-
-        $('.btn-edit').click(function(e) {
-            e.preventDefault();
-            var id = getIdCheckBox();
-            window.location.href = '{{ url(Request::path()) }}/'+id+'/edit';
-        });
-
-        $('#chb-all').change(function(e) {
-            e.preventDefault();
-            $('.chbids').prop('checked', this.checked);
-            if (this.checked) $('.btn-remove').removeClass('hide');
-        });     
-
-
-        $('input[type=checkbox]').change(function(e) {
-            var cont = 0;
-            $('input[type=checkbox]').each(function () {
-                if (this.checked) {
-                    cont++;
-                }
-            });
-
-            if (cont==0)
-            {
-                $('.btn-remove').addClass('hide');
-            }
-            else if (cont==1)
-            {
-                $('.btn-remove').removeClass('hide');
-            }
-        });
-    });
-</script>
-@stop
-
 @section('toolbars')
 <div class="toolbars">
     <a class="btn btn-success btn-new"><i class="fa fa-fw fa-plus"></i>{{ trans('messages.new') }}</a>
@@ -106,4 +41,69 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('scripts')
+<script type="text/javascript">
+    $(function() {
+
+        $('.btn-remove').click(function(e) {
+            e.preventDefault();
+            bootbox.dialog({
+              message: "{{ trans('messages.'.$route['table'].'.delete.message') }}",
+              title: "{{ trans('messages.'.$route['table'].'.delete.title') }}",
+                buttons: {
+                    success: {
+                        label: "{{ trans('messages.yes') }}",
+                        className: "btn-primary",
+                        callback: function() {
+                            frmList.submit();
+                        }
+                    },
+                    danger: {
+                        label: "{{ trans('messages.no') }}",
+                        className: "btn-default",
+                    },
+              }
+            });
+        });
+
+        $('.btn-new').click(function(e) {
+            e.preventDefault();
+            alert('fff');
+            window.location.href = '{{ url(Request::path()) }}/create';
+        });
+
+        $('.btn-edit').click(function(e) {
+            e.preventDefault();
+            var id = getIdCheckBox();
+            window.location.href = '{{ url(Request::path()) }}/'+id+'/edit';
+        });
+
+        $('#chb-all').change(function(e) {
+            e.preventDefault();
+            $('.chbids').prop('checked', this.checked);
+            if (this.checked) $('.btn-remove').removeClass('hide');
+        });
+
+
+        $('input[type=checkbox]').change(function(e) {
+            var cont = 0;
+            $('input[type=checkbox]').each(function () {
+                if (this.checked) {
+                    cont++;
+                }
+            });
+
+            if (cont==0)
+            {
+                $('.btn-remove').addClass('hide');
+            }
+            else if (cont==1)
+            {
+                $('.btn-remove').removeClass('hide');
+            }
+        });
+    });
+</script>
 @stop

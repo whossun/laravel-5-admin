@@ -23,7 +23,7 @@ class RoleForm extends Form
             ->add('permissions', 'select', [
                 'choices' => $this->getPermissions(),
                 'selected' => $this->getPermissionsSelected(),
-                'display_name' => trans('messages.permissions.index'),
+                'label' => trans('messages.permissions.index'),
                 'attr' => [
                     'multiple' => true,
                     'id' => 'permissions'

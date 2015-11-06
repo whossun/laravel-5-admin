@@ -1,7 +1,7 @@
 @extends('layout.partials.datatable')
 
 @section('table')
-    <table class="table table-striped table-condensed table-hover" id="dt-table"></table>
+    <table class="table table-striped table-condensed table-hover responsive" id="dt-table"></table>
 @stop
 
 @section('scripts')
@@ -13,9 +13,21 @@ $(document).ready(function (){
         ajax: '',
         order: [1, 'desc'],
         columns: {!! $html !!},
-        drawCallback: function( settings ) {
+        fnDrawCallback: function( settings ) {
             // $('div.dataTables_filter input').addClass('input[type=search]');
-            $('.btn-remove,.btn-delete ').click(function(e) {
+            $('.btn-edit').click(function(e) {
+                e.preventDefault();
+                var id = $(this).data("id");
+                // window.location.href = '{{ url(Request::path()) }}/'+id+'/edit';return false;
+                $.get('{{ url(Request::path()) }}/'+id+'/edit', function(data){
+                    bootbox.dialog({
+                        size: 'large',
+                        closeButton: false,
+                        message: data,
+                    });
+                });
+            });
+            $('.btn-delete').click(function(e) {
                     e.preventDefault();
                     deleteDataTableSelect($(this));
                     return false;
@@ -34,13 +46,19 @@ $(document).ready(function (){
 
     $('.btn-new').click(function(e) {
         e.preventDefault();
-        window.location.href = '{{ url(Request::path()) }}/create';
+        // window.location.href = '{{ url(Request::path()) }}/create';
+        $.get('{{ url(Request::path()) }}/create', function(data){
+            bootbox.dialog({
+                size: 'large',
+                closeButton: false,
+                message: data,
+            });
+        });
     });
-
-    $('.btn-edit').click(function(e) {
-        e.preventDefault();
-        var id = getIdCheckBox();
-        window.location.href = '{{ url(Request::path()) }}/'+id+'/edit';
+    $('.btn-remove').click(function(e) {
+            e.preventDefault();
+            deleteDataTableSelect($(this));
+            return false;
     });
 
     function checkDeleteTitle(tr){//判断删除框取哪个td的标题
@@ -72,53 +90,24 @@ $(document).ready(function (){
             title += "{{trans('messages.'.$route['table'])}}";
             title += checkDeleteTitle(button.parent().parent());
         }
-        swal({
-            title: title+"？",
-            text:"{{ trans('messages.delete.message') }}",
-            html: true,
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: '#DD6B55',
-            confirmButtonText: "{{ trans('messages.yes') }}",
-            cancelButtonText:  "{{ trans('messages.no') }}",
-            closeOnConfirm: false
-        },
-        function(){
-            var frm = $('#frmList');
-            $.ajax({
-                type: frm.attr('method'),
-                url: frm.attr('action')+'/'+checkedValues,
-                data: frm.serialize(),
-                cache: false,
-                dataType: 'json',
-                success: function(data) {
-                    swal({
-                        title: data.status,
-                        text: "{{ trans('messages.autoclose') }}!",
-                        type: data.type,
-                        timer: 1000,
-                        showConfirmButton: false
-                    });
-                    $('#dt-table').DataTable().ajax.reload( null, false ); // user paging is not reset on reload
-                },
-                error: function(xhr, textStatus, thrownError) {
-                    var title = "AJAX request error.\n";
-                    switch (textStatus) {
-                        case 'timeout':
-                            message = "The request timed out.";
-                            break;
-                        case 'notmodified':
-                            message = "The request was not modified but was not retrieved from the cache.";
-                            break;
-                        case 'parsererror':
-                            message = "XML/Json format is bad.";
-                            break;
-                        default:
-                            message = "HTTP Error (" + xhr.status + " " + xhr.statusText + ").";
+        console.log(title);
+        bootbox.confirm(title+"？", function(result) {
+            console.log("Confirmed: "+result);
+            if (result) {
+                var frm = $('#frmList');
+                $.ajax({
+                    type: frm.attr('method'),
+                    url: frm.attr('action')+'/'+checkedValues,
+                    data: frm.serialize(),
+                    cache: false,
+                    dataType: 'json',
+                    success: function(data) {
+                        bootbox.hideAll();
+                        toastr[data.type](data.status);
+                        $('#dt-table').DataTable().ajax.reload( null, false ); // user paging is not reset on reload
                     }
-                    swal(title, message, "error");
-                }
-            });
+                });
+            }
         });
     }
 

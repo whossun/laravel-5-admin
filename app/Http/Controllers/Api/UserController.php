@@ -46,7 +46,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $user = $this->user->getModel()->findOrFail($id);
+        $user = $this->user->find($id);
 
         return $user;
     }

@@ -1,8 +1,8 @@
-<?php namespace App\Http\Requests;
+<?php namespace App\Http\Requests\PermissionGroup;
 
 use App\Http\Requests\Request;
 
-class PermissionGroupRequest extends Request {
+class SortPermissionGroupRequest extends Request {
 
     public function authorize()
     {
@@ -12,7 +12,6 @@ class PermissionGroupRequest extends Request {
     public function rules()
     {
         return [
-            'name' => 'required'
         ];
     }
 }

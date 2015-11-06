@@ -27,19 +27,24 @@ class DummyClass extends Controller {
         return view('datatable',compact('html'));
     }
 
-    public function create(FormBuilder $formBuilder)
+    public function create(Request $request, FormBuilder $formBuilder)
     {
         $form = $formBuilder->create('App\Forms\{{Model}}Form', [
             'method' => 'POST',
             'url' => route('admin.{{models}}.store')
         ]);
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
     public function store({{Model}}Request $request)
     {
         ${{model}} = $this->{{model}}->save(null, $request->all());
-        $route = ($request->get('task')=='apply') ? route('admin.{{models}}.edit', ${{model}}->id) : route('admin.{{models}}.index');
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }        $route = ($request->get('task')=='apply') ? route('admin.{{models}}.edit', ${{model}}->id) : route('admin.{{models}}.index');
         return redirect($route)->with([
             'status' => trans('messages.saved'),
             'type-status' => 'success'
@@ -48,25 +53,30 @@ class DummyClass extends Controller {
 
     public function show($id)
     {
-        ${{model}} = $this->{{model}}->getModel()->findOrFail($id);
+        ${{model}} = $this->{{model}}->find($id);
         return view('{{models}}.show', compact('{{model}}'));
     }
 
-    public function edit($id, FormBuilder $formBuilder)
+    public function edit($id, Request $request, FormBuilder $formBuilder)
     {
-        ${{model}} = $this->{{model}}->getModel()->findOrFail($id);
+        ${{model}} = $this->{{model}}->find($id);
         $form = $formBuilder->create('App\Forms\{{Model}}Form', [
             'model' => ${{model}},
             'method' => 'PUT',
             'url' => route('admin.{{models}}.update', $id)
         ]);
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
     public function update($id, {{Model}}Request $request)
     {
         $this->{{model}}->save($id, $request->all());
-        $route = ($request->get('task')=='apply') ? route('admin.{{models}}.edit', $id) : route('admin.{{models}}.index');
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }        $route = ($request->get('task')=='apply') ? route('admin.{{models}}.edit', $id) : route('admin.{{models}}.index');
         return redirect($route)->with([
             'status' => trans('messages.saved'),
             'type-status' => 'success'

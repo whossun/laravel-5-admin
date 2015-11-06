@@ -30,21 +30,26 @@ class ArticleController extends Controller {
         return view('datatable',compact('html'));
     }
 
-    public function create(FormBuilder $formBuilder)
+    public function create(Request $request, FormBuilder $formBuilder)
     {
         $form = $formBuilder->create('App\Forms\ArticleForm', [
             'method' => 'POST',
             'url' => route('admin.articles.store')
         ]);
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
     public function store(ArticleRequest $request)
     {
-
         $data = $request->all();
         $data['author'] =  auth()->user()->id;
         $article = $this->article->save(null,$data);
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }
         $route = ($request->get('task')=='apply') ? route('admin.articles.edit', $article->id) : route('admin.articles.index');
         return redirect($route)->with([
             'status' => trans('messages.saved'),
@@ -54,13 +59,13 @@ class ArticleController extends Controller {
 
     public function show($id)
     {
-        $article = $this->article->getModel()->findOrFail($id);
+        $article = $this->article->find($id);
         return view('articles.show', compact('article'));
     }
 
-    public function edit($id, FormBuilder $formBuilder)
+    public function edit($id, Request $request, FormBuilder $formBuilder)
     {
-        $article = $this->article->getModel()->findOrFail($id);
+        $article = $this->article->find($id);
         // $user = Auth::loginUsingId(1);
         $this->authorize('articles_update', $article);
         $form = $formBuilder->create('App\Forms\ArticleForm', [
@@ -69,21 +74,24 @@ class ArticleController extends Controller {
             'method' => 'PUT',
             'url' => route('admin.articles.update', $id)
         ]);
-
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
     public function update($id, ArticleRequest $request)
     {
-        $this->authorize('articles_update',$this->article->getModel()->findOrFail($id));
+        $this->authorize('articles_update',$this->article->find($id));
         $data = $request->all();
         // $data['name'] =  '123';
         // $data['author'] =  Auth::id();
-        // $post = $this->article->getModel()->findOrFail($id);
+        // $post = $this->article->find($id);
         $this->article->save($id, $data);
-
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }
         $route = ($request->get('task')=='apply') ? route('admin.articles.edit', $id) : route('admin.articles.index');
-
         return redirect($route)->with([
             'status' => trans('messages.saved'),
             'type' => 'success'
@@ -93,7 +101,7 @@ class ArticleController extends Controller {
     public function destroy($ids)
     {
         foreach (explode(',', $ids) as $id) {
-            $this->authorize('articles_delete', $this->article->getModel()->findOrFail($id));
+            $this->authorize('articles_delete', $this->article->find($id));
         }
         $this->article->deleteAll(explode(',', $ids));
         return [

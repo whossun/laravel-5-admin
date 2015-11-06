@@ -22,8 +22,9 @@ class PermissionRequest extends Request {
     public function rules()
     {
         return [
-            'name' => 'required',
-            'display_name' => 'required'
+            'name' => 'required|unique:permissions,name,'.$this->route()->parameter('permissions'),
+            'display_name' => 'required',
+            'group_id' => 'required',
         ];
     }
 }

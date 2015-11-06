@@ -24,6 +24,12 @@ return [
         'edit' => true,
         'name' => 'messages.permissions'
     ],
+    'permissiongroups' => [
+        'permission' => 'permissiongroups_view',
+        'icon' => 'fa fa-object-group',
+        'edit' => true,
+        'name' => 'messages.permissiongroups'
+    ],
     'articles' => [
         'permission' => 'articles_view',
         'icon' => 'fa-file-o',
@@ -36,11 +42,6 @@ return [
         'edit' => true,
         'name' => 'messages.settings'
     ],
-    'permissiongroups' => [
-        'permission' => 'permissiongroups_view',
-        'icon' => 'fa-file-o',
-        'edit' => true,
-        'name' => 'messages.permissiongroups'
-    ],
+
 
 ];

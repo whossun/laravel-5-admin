@@ -9,6 +9,7 @@
 <?php endif; ?>
 
 <?php if ($showField): ?>
+    <br>
     <?php foreach ((array)$options['children'] as $child): ?>
         <?= $child->render(['selected' => $options['selected']], true, true, false) ?>
     <?php endforeach; ?>

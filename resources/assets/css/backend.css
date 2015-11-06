@@ -1,17 +1,11 @@
 .auth{margin: 7% auto;}
-
 .capitalize{text-transform: capitalize;}
-
-.content-header h1{float: left; width: 50%;}
-
 .overflow{overflow: auto;}
-
 .content-header{overflow: auto;}
-
 .toolbars{float: right; width: 50%;text-align: right;display: none;}
-
 .fullscreen-toggle{font-size: 20px;}
 #map{width:100%; height: 400px;}
+.label-normal{font-weight: normal;};
 
 dl{margin: 5px 0;}
 

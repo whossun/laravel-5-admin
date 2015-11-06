@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-xs-12">
             <div id="frmModel" class="box">
-                <div class="box-body">          
+                <div class="box-body">
                     @yield('form', form($form))
                 </div>
                 <div class="box-footer">
@@ -16,7 +16,7 @@
                         <div class="text-right">
                             <button class="btn btn-warning btn-apply pull-left"><i class="fa fa-edit fa-fw"></i>{{ trans('messages.apply') }}</button>
                             <a class="btn btn-default" href="{{ route('admin.'.$route['table'].'.index') }}"><i class="fa fa-times fa-fw"></i>{{ trans('messages.cancel') }}</a>
-                            <button class="btn btn-primary"><i class="fa fa-edit fa-floppy-o fa-fw"></i>{{ trans('messages.save') }}</button>
+                            <button class="btn btn-primary"><i class="fa fa-floppy-o fa-fw"></i>{{ trans('messages.save') }}</button>
                         </div>
                     </div>
                 </div>

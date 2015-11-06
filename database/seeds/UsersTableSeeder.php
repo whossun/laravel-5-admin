@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\PermissionGroup;
 
 class UsersTableSeeder extends Seeder
 {
@@ -15,6 +16,7 @@ class UsersTableSeeder extends Seeder
         DB::table('users')->truncate();
         DB::table('roles')->truncate();
         DB::table('permissions')->truncate();
+        DB::table('permission_groups')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 
         $faker = Faker\Factory::create();
@@ -37,17 +39,28 @@ class UsersTableSeeder extends Seeder
         $role_editor = Role::create(['name' => 'editor', 'display_name' => '编辑']);
         $role_user = Role::create(['name' => 'user', 'display_name' => '普通用户']);
 
-        //Permission
-        Permission::create(['name' => 'dashboard_view', 'display_name' => '管理首页']);
-        Permission::create(['name' => 'users_view', 'display_name' => '帐户管理']);
-        Permission::create(['name' => 'users_create', 'display_name' => '新建帐户']);
-        Permission::create(['name' => 'users_update', 'display_name' => '修改帐户']);
-        Permission::create(['name' => 'users_delete', 'display_name' => '删除帐户']);
+        //Permission&PermissionGroup
+        PermissionGroup::create(['name' => '后台']);
+        PermissionGroup::create(['name' => 'RBAC','parent_id' => 1]);
+        Permission::create(['name' => 'dashboard_view', 'display_name' => '首页', 'group_id' => 1]);
 
-        Permission::create(['name' => 'articles_view', 'display_name' => '文章管理']);
-        Permission::create(['name' => 'articles_create', 'display_name' => '新建文章']);
-        Permission::create(['name' => 'articles_update', 'display_name' => '修改文章']);
-        Permission::create(['name' => 'articles_delete', 'display_name' => '删除文章']);
+        $models = [
+            ['route_name' => 'users','menu_name' => '帐户','group_id' =>3,'group_pid' =>2],
+            ['route_name' => 'roles','menu_name' => '角色','group_id' =>4,'group_pid' =>2],
+            ['route_name' => 'permissions','menu_name' => '权限','group_id' =>5,'group_pid' =>2],
+            ['route_name' => 'permissiongroups','menu_name' => '权限分组','group_id' =>6,'group_pid' =>2],
+            ['route_name' => 'articles','menu_name' => '文章','group_id' =>7,'group_pid' =>1],
+            ['route_name' => 'settings','menu_name' => '配置','group_id' =>8,'group_pid' =>1],
+        ];
+
+        foreach ($models as $key=>$model) {
+            PermissionGroup::create(['name' => $model['menu_name'],'parent_id' => $model['group_pid']]);
+            Permission::create(['group_id' => $model['group_id'],'name' => $model['route_name'].'_view', 'display_name' => $model['menu_name'].'菜单']);
+            Permission::create(['group_id' => $model['group_id'],'name' => $model['route_name'].'_create', 'display_name' => '新建'.$model['menu_name']]);
+            Permission::create(['group_id' => $model['group_id'],'name' => $model['route_name'].'_update', 'display_name' => '修改'.$model['menu_name']]);
+            Permission::create(['group_id' => $model['group_id'],'name' => $model['route_name'].'_delete', 'display_name' => '删除'.$model['menu_name']]);
+
+        }
 
         //Roles Users
         $test_user->roles()->save($role_editor);

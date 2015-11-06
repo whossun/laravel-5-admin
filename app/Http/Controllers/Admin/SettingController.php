@@ -10,29 +10,13 @@ use Datatables;
 
 class SettingController extends Controller {
 
-    /**
-     * Repostory setting
-     *
-     * @var SettingRepository
-     */
     private $setting;
 
-    /**
-     * Construc controller.
-     *
-     * @param  Setting $setting
-     */
     public function __construct(Setting $setting)
     {
         $this->setting = $setting;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
     public function index(Request $request)
     {
         if ($request->ajax()) {
@@ -44,98 +28,62 @@ class SettingController extends Controller {
         return view('datatable',compact('html'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @param  FormBuilder  $formBuilder
-     * @return Response
-     */
-    public function create(FormBuilder $formBuilder)
+    public function create(Request $request, FormBuilder $formBuilder)
     {
         $form = $formBuilder->create('App\Forms\SettingForm', [
             'method' => 'POST',
             'url' => route('admin.settings.store')
         ]);
-
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  SettingRequest  $request
-     * @return Response
-     */
     public function store(SettingRequest $request)
     {
         $setting = $this->setting->save(null, $request->all());
-
-        $route = ($request->get('task')=='apply') ? route('admin.settings.edit', $setting->id) : route('admin.settings.index');
-
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }        $route = ($request->get('task')=='apply') ? route('admin.settings.edit', $setting->id) : route('admin.settings.index');
         return redirect($route)->with([
             'status' => trans('messages.saved'), 
             'type' => 'success'
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
     public function show($id)
     {
-        $setting = $this->setting->getModel()->findOrFail($id);
-
+        $setting = $this->setting->find($id);
         return view('settings.show', compact('setting'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @param  FormBuilder  $formBuilder
-     * @return Response
-     */
-    public function edit($id, FormBuilder $formBuilder)
+    public function edit($id, Request $request, FormBuilder $formBuilder)
     {
-        $setting = $this->setting->getModel()->findOrFail($id);
-
+        $setting = $this->setting->find($id);
         $form = $formBuilder->create('App\Forms\SettingForm', [
             'model' => $setting,
             'method' => 'PUT',
             'url' => route('admin.settings.update', $id)
         ]);
-
-        return view('layout.partials.form', compact('form'));
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @param  SettingRequest  $request
-     * @return Response
-     */
     public function update($id, SettingRequest $request)
     {
         $this->setting->save($id, $request->all());
-
-        $route = ($request->get('task')=='apply') ? route('admin.settings.edit', $id) : route('admin.settings.index');
-
+        if($request->ajax()){
+            return response()->json([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
+        }        $route = ($request->get('task')=='apply') ? route('admin.settings.edit', $id) : route('admin.settings.index');
         return redirect($route)->with([
             'status' => trans('messages.saved'), 
             'type' => 'success'
         ]);
     }
 
-    /**
-     * Remove  resources from storage.
-     *
-     * @param  array  $id
-     * @return Response
-     */
     public function destroy($ids)
     {
         $this->setting->deleteAll(explode(',', $ids));
