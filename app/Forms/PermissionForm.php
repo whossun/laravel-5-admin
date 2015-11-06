@@ -4,6 +4,7 @@ use App\Models\Permission;
 use App\Models\PermissionGroup;
 use App\Repositories\PermissionGroupRepository;
 use Kris\LaravelFormBuilder\Form;
+use DB;
 
 class PermissionForm extends Form
 {
@@ -15,11 +16,7 @@ class PermissionForm extends Form
 
     protected function getGroups()
     {
-        // return PermissionGroup::lists('name', 'id')->toArray();
-        dd($this->permissiongroup->getOrderdGroups());
-        // dd(PermissionGroup::lists('name', 'id')->toArray());
-        list($keys, $values) = array_divide($this->getOrderdPermissions());
-        dd($this->permissiongroup->getModel()->find($keys)->lists('name', 'id')->toArray());
+        return $this->permissiongroup->getOrderdGroups();
     }
 
     protected function getGroupsSelected()
@@ -53,7 +50,7 @@ class PermissionForm extends Form
             ->add('permission_dependencies', 'permission_checkbox', [
                 'label' => '权限依赖',
                 'choices' => $this->getPermissons(),
-                'tree' => $this->getPermissonss(),
+                'tree' => $this->permissiongroup->getOrderdPermissions(),
                 'current' => isset($this->model->id)?$this->model->id:0,
                 'selected' => [1,2],
 

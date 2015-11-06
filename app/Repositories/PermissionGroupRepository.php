@@ -19,7 +19,7 @@ class PermissionGroupRepository extends Repository {
             ->get();
     }
 
-    private function getHierarchy($projects){
+    public function getHierarchy($projects){
         $string = '<ol class="dd-list">';
         foreach ($projects as $i => $project) {
             $string .= '<li class="dd-item" data-id="'.$project->id.'">';
@@ -33,7 +33,7 @@ class PermissionGroupRepository extends Repository {
         return $string;
     }
 
-    private function getTree($projects)
+    public function getTree($projects)
     {
         $string = '<ul>';
         foreach ($projects as $i => $project) {
@@ -55,15 +55,15 @@ class PermissionGroupRepository extends Repository {
         return $string;
     }
 
-    private function getPermissionsArray($projects)
+    public function getPermissionsArray($projects)
     {
         $array = [];
-        foreach ($projects as $i => $project) {
+        foreach ($projects as $project) {
             if($project->permissions->count()){
                 $array[$project->id] = $project->permissions->lists('display_name', 'id')->toArray();
             }
             if ($project->children()->count()) {
-                array_push($array,$this->getTreeArray($project->children()->get()));
+                array_push($array,$this->getPermissionsArray($project->children()->get()));
             }
         }
         return $array;
@@ -77,34 +77,37 @@ class PermissionGroupRepository extends Repository {
             $array =  explode('.',$key);
             end($array);
             $group =  prev($array);
-            if (!isset($permissions_array[$group])){
-                $permissions_array[$group] = [];
+            if (!isset($permissions_array[$group][last($array)])){
+                $permissions_array[$group][last($array)] = [];
             }
-            array_push($permissions_array[$group],last($array));
+            array_push($permissions_array[$group][last($array)],$permission);
         }
         return $permissions_array;
     }
 
-    public function getGroupsArray($elements, $parentId = 0) {
-        $branch = [];
-        foreach ($elements as $element) {
-            if ($element['parent_id'] == $parentId) {
-                $children = $this->getGroupsArray($elements, $element['id']);
-                if ($children) {
-                    $element['children'] = $children;
-                }
-                $branch[] = $element;
+    public function getGroupsArray($projects,$pre = '├─')
+    {
+        $array = [];
+        foreach ($projects as $project) {
+        	$array[$project->id]['name'] = $pre.$project->name;
+            if ($project->children()->count()) {
+            	array_push($array,$this->getGroupsArray($project->children()->get(),$pre.'──'));
             }
         }
-        return $branch;
+        return $array;
     }
 
     public function getOrderdGroups(){
-        $source = $this->model->all()->toArray();//list
-        $projects = array_dot($this->getGroupsArray($source));
-        dd($projects);
-        $aaa = array_dot($this->getTreeArray($projects));
-        dd($aaa);
+        $orderd_array =  array_dot($this->getGroupsArray($this->getAllGroups()));
+        $groups_array =  [];
+        foreach ($orderd_array as $key => $group_name) {
+            $array =  explode('.',$key);
+            end($array);
+            $group =  prev($array);
+            if(last($orderd_array)==$group_name)$group_name = str_replace('├─', '└─',$group_name);
+            $groups_array[$group] = $group_name;
+        }
+        return $groups_array;
     }
 
     public function update($id, $input) {

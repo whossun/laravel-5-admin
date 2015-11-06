@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\Article;
-
-class ArticleTableSeeder extends Seeder
+//如果提示[Class ArticlesTableSeeder does not exist ]需要运行composer dump-autoload
+class ArticlesTableSeeder extends Seeder
 {
     public function run()
     {
