@@ -36,7 +36,7 @@ class PermissionController extends Controller {
             'method' => 'POST',
             'url' => route('admin.permissions.store')
         ]);
-        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
+        return view($request->ajax()?'rbac.permission_ajaxform':'layout.partials.form', compact('form'));
     }
 
     public function store(PermissionRequest $request)
@@ -71,7 +71,7 @@ class PermissionController extends Controller {
             'method' => 'PUT',
             'url' => route('admin.permissions.update', $id)
         ]);
-        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form'));
+        return view($request->ajax()?'rbac.permission_ajaxform':'layout.partials.form', compact('form'));
     }
 
     public function update($id, PermissionRequest $request)
