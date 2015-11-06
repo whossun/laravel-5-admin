@@ -24,7 +24,6 @@
 @section('scripts')
 <script>
 $(document).ready(function(){
-	alret(1);
 	$('input').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
