@@ -20,11 +20,11 @@ class DummyClass extends Controller {
     {
         if ($request->ajax()) {
             return Datatables::of($this->{{model}}->all())
-            ->addColumn('action', function($model) { return $this->{{model}}->action_butttons($model);})
+            ->addColumn('action', function($model) { return $this->{{model}}->actionButttons($model);})
             ->make(true);
         }
         $html = $this->{{model}}->columns();
-        return view('datatable',compact('html'));
+        return view('layout.partials.datatable',compact('html'));
     }
 
     public function create(Request $request, FormBuilder $formBuilder)

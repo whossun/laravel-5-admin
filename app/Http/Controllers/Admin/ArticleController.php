@@ -18,16 +18,23 @@ class ArticleController extends Controller {
 
     public function index(Request $request)
     {
+/*        $html = Datatables::of($this->article->all())
+                    ->editColumn('author', function ($model) {
+                        return isset($model->user->name)?$model->user->name:'';
+                    })
+                    ->addColumn('action', function($model) { return $this->article->actionButttons($model);})
+                    ->make(true);
+        return view('rbac.test',compact('html'));*/
         if ($request->ajax()) {
             return Datatables::of($this->article->all())
-/*            ->editColumn('author', function ($model) {
-                return $model->user->name;
-            })*/
-            ->addColumn('action', function($model) { return $this->article->action_butttons($model);})
+            ->editColumn('author', function ($model) {
+                return isset($model->user->name)?$model->user->name:'';
+            })
+            ->addColumn('action', function($model) { return $this->article->actionButttons($model);})
             ->make(true);
         }
         $html = $this->article->columns();
-        return view('datatable',compact('html'));
+        return view('layout.partials.datatable',compact('html'));
     }
 
     public function create(Request $request, FormBuilder $formBuilder)

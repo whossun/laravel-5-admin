@@ -5,11 +5,6 @@ use Jenssegers\Date\Date;
 
 class Role extends Model
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = ['name', 'display_name'];
 
     public $datatable_fields = [
@@ -20,11 +15,10 @@ class Role extends Model
         'updated_at'   => ['orderable' => true,'searchable' => false],
     ];
 
-    /**
-     * Get the created date
-     *
-     * @return string
-     */
+    public $datatable_attributes = [
+        'ajax_edit' =>  false
+    ];
+
     public function getCreatedAttribute()
     {
         return Date::parse($this->created_at)->format('d-m-Y');
@@ -35,20 +29,11 @@ class Role extends Model
         return $this->belongsToMany(User::class);
     }
 
-    /**
-     * Permissions relation
-     * @return Permissions
-     */
     public function permissions()
     {
         return $this->belongsToMany(Permission::class);
     }
 
-    /**
-     * Save Permision in Role
-     * @param  Permission $permission
-     * @return Role
-     */
     public function givePermissionTo(Permission $permission)
     {
         return $this->permissions()->save($permission);

@@ -9,7 +9,7 @@
         "laravel/framework": "5.1.*",
         "jenssegers/date": "^3.0",
         "laravelcollective/html": "5.1.*",
-        "kris/laravel-form-builder": "^1.6",
+        "kris/laravel-form-builder": "1.6.*",
         "yajra/laravel-datatables-oracle": "~5.0",
         "barryvdh/laravel-debugbar": "^2.0",
         "davejamesmiller/laravel-breadcrumbs": "^3.0"

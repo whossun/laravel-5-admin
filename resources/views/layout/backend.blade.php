@@ -6,5 +6,6 @@
         @include('layout.partials.sidebar')
         @include('layout.partials.content')
         @include('layout.partials.footer')
+        @include('layout.partials.control-sidebar')
     </div>
 @stop

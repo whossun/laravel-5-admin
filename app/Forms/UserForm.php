@@ -23,7 +23,7 @@ class UserForm extends Form
             ->add('roles', 'select', [
                 'choices' => $this->getRoles(),
                 'selected' => $this->getRolesSelected(),
-                'label' => trans('messages.roles.index'),
+                'label' => trans('messages.roles'),
                 'attr' => [
                     'multiple' => true,
                     'id' => 'roles',

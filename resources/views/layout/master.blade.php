@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="_token" content="{{ csrf_token() }}" />
         <title>
-        @yield('title',($route['action']== 'index') ? trans('messages.'.$route['table']) : trans('messages.'.$route['action']).trans('messages.'.$route['table'])."-".config('custom.name'))
+        @yield('title',($route['action']== 'index') ? trans('messages.'.$route['table'])."-".config('custom.name') : trans('messages.'.$route['action']).trans('messages.'.$route['table'])."-".config('custom.name'))
         </title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <link href="{{ asset('favicon.ico') }}" rel="shortcut icon" type="image/vnd.microsoft.icon" />

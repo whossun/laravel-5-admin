@@ -1,22 +1,16 @@
 <?php namespace App\Forms;
 
 use App\Models\Permission;
-use App\Models\PermissionGroup;
-use App\Repositories\PermissionGroupRepository;
+use App\Repositories\PermissionGroupRepository as PermissionGroup;
 use Kris\LaravelFormBuilder\Form;
 use DB;
 
 class PermissionForm extends Form
 {
-
-    public function __construct(PermissionGroupRepository $permissiongroup)
+    public function __construct(Permission $permission,PermissionGroup $permissiongroup)
     {
+        $this->permission = $permission;
         $this->permissiongroup = $permissiongroup;
-    }
-
-    protected function getGroups()
-    {
-        return $this->permissiongroup->getOrderdGroups();
     }
 
     protected function getGroupsSelected()
@@ -24,37 +18,32 @@ class PermissionForm extends Form
         return !isset($this->model->id) ?'': $this->model->group_id;
     }
 
-    protected function getPermissons()
+    protected function getdDependencies()
     {
-        $array = Permission::lists('display_name', 'id')->toArray();
-        return !isset($this->model->id) ? $array : array_except($array,$this->model->id);
-    }
-
-    protected function getOrderdPermissions()
-    {
-        return $this->permissiongroup->getOrderdPermissions();
+        return !isset($this->model->id)?[]:$this->permission->find($this->model->id)->dependencies()->lists('dependency_id')->toArray();
     }
 
     public function buildForm()
     {
+        $this->addCustomField('dependencies', Fields\PermissionDependencies::class);
         $this
-            ->add('name', 'text', ['label' => trans('messages.name')])
-            ->add('display_name', 'text', ['label' => trans('messages.display_name')])
+            ->add('name', 'text', ['label' => trans('messages.name'),'rules' => 'required'])
+            ->add('display_name', 'text', ['label' => trans('messages.display_name'),'rules' => 'required'])
             ->add('group_id', 'select', [
                 'label' => trans('messages.group_id'),
-                'choices' => $this->getGroups(),
+                'rules' => 'required',
+                'choices' => $this->permissiongroup->getOrderdGroups(),
                 'selected' => $this->getGroupsSelected(),
                 'empty_value' => trans('messages.please_select'),
 			])
 			->add('sort', 'text', ['label' => trans('messages.sort')])
-            ->add('permission_dependencies', 'permission_checkbox', [
-                'label' => '权限依赖',
-                'choices' => $this->getPermissons(),
-                'tree' => $this->permissiongroup->getOrderdPermissions(),
+            ->add('dependencies', 'dependencies', [
+                'label' => trans('messages.permissiondependencies'),
+                'choices' => $this->permissiongroup->getOrderdPermissions(),
                 'current' => isset($this->model->id)?$this->model->id:0,
-                'selected' => [1,2],
-
+                'selected' => $this->getdDependencies(),
             ])
+            ->add('task', 'hidden')
         ;
     }
 }

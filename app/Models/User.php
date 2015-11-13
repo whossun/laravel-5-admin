@@ -16,18 +16,8 @@ class User extends Model implements AuthenticatableContract,
 {
     use Authenticatable, Authorizable, CanResetPassword, Access;
 
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
     protected $table = 'users';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = ['name', 'email', 'password'];
 
     /**
@@ -46,28 +36,17 @@ class User extends Model implements AuthenticatableContract,
     ];
 
 
-    /**
-     * Get From
-     * @return string
-     */
     public function getFromAttribute()
     {
         return Date::parse($this->created_at)->format('M. Y');
     }
 
-    /**
-     * Get Created
-     * @return string
-     */
+
     public function getCreatedAttribute()
     {
         return Date::parse($this->created_at)->format('d-m-Y');
     }
 
-    /**
-     * Get Avatar
-     * @return string
-     */
     public function getAvatarAttribute()
     {
         return $path = asset('logo.jpg');;
@@ -80,12 +59,6 @@ class User extends Model implements AuthenticatableContract,
     }
 
 
-    /**
-     * Check if the permission matches with any permission user has
-     *
-     * @param  String permission slug of a permission
-     * @return Boolean true if permission exists, otherwise false
-     */
     public function checkPermission($perm)
     {
         $permissions = $this->getAllPernissionsFormAllRoles();
@@ -93,11 +66,7 @@ class User extends Model implements AuthenticatableContract,
         return count(array_intersect($permissions, $permissionArray))>0;
     }
 
-    /**
-     * Get all permission slugs from all permissions of all roles
-     *
-     * @return Array of permission slugs
-     */
+
     protected function getAllPernissionsFormAllRoles()
     {
         $permissionsArray = [];
@@ -112,10 +81,6 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->belongsToMany(Role::class);
     }
-
-
-
-
 
     public function hasPermission($permission)
     {

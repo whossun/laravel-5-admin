@@ -1,12 +1,27 @@
 <?php namespace App\Repositories;
 
+use App\Models\Permission;
 use App\Models\PermissionGroup;
 
 class PermissionGroupRepository extends Repository {
 
-    public function __construct(PermissionGroup $permissiongroup)
+    public function __construct(PermissionGroup $permissiongroup,Permission $permission)
     {
         $this->model = $permissiongroup;
+        $this->permission = $permission;
+    }
+
+    public function getPermissionsHierarchy($id) {
+        $group = $this->model->find($id);
+        $string = '';
+        if($group->permissions->count()){
+            $string .= '<ol class="dd-list">';
+            foreach ($group->permissions as $permission) {
+                $string .= '<li class="dd-item" data-id="'.$permission->id.'"><div class="dd-handle">'.$permission->display_name.'</div></li>';
+            }
+            $string .= "</ol>";
+        }
+        return [$group->permissions->count(),$string];
     }
 
     public function getAllGroups($withChildren = false) {
@@ -19,13 +34,13 @@ class PermissionGroupRepository extends Repository {
             ->get();
     }
 
-    public function getHierarchy($projects){
+    public function getHierarchy($groups){
         $string = '<ol class="dd-list">';
-        foreach ($projects as $i => $project) {
-            $string .= '<li class="dd-item" data-id="'.$project->id.'">';
-            $string .= '<div class="dd-handle">'.$project->name.'<span class="pull-right">'.$project->permissions->count().'个权限</span></div>';
-            if($project->children->count()){
-                $string .= $this->getHierarchy($project->children()->get());
+        foreach ($groups as $i => $group) {
+            $string .= '<li class="dd-item" data-id="'.$group->id.'">';
+            $string .= '<div class="dd-handle">'.$group->name.'<span class="pull-right">'.$group->permissions->count().'个权限</span></div>';
+            if($group->children->count()){
+                $string .= $this->getHierarchy($group->children()->get());
             }
             $string .= "</li>";
         }
@@ -33,21 +48,21 @@ class PermissionGroupRepository extends Repository {
         return $string;
     }
 
-    public function getTree($projects)
+    public function getTree($groups)
     {
         $string = '<ul>';
-        foreach ($projects as $i => $project) {
-            $string .= '<li data-id="'.$project->id.'" data-name="'.$project->name.'">';
-            $string .= $project->name;
-            if($project->permissions->count()){
+        foreach ($groups as $i => $group) {
+            $string .= '<li data-id="'.$group->id.'" data-name="'.$group->name.'">';
+            $string .= $group->name;
+            if($group->permissions->count()){
                 $string .= '<ul>';
-                foreach ($project->permissions as $permission) {
+                foreach ($group->permissions as $permission) {
                     $string .= '<li data-jstree=\'{"icon":"fa fa-lock","disabled":true}\'>'.$permission->display_name .'</li>';
                 }
                 $string .= "</ul>";
             }
-            if ($project->children()->count()) {
-                $string .= $this->getTree($project->children()->get());
+            if ($group->children()->count()) {
+                $string .= $this->getTree($group->children()->get());
             }
             $string .= "</li>";
         }
@@ -55,15 +70,36 @@ class PermissionGroupRepository extends Repository {
         return $string;
     }
 
-    public function getPermissionsArray($projects)
+/*    public function getMenu()
+    {
+        return $this->getMenusArray($this->getAllGroups());
+    }
+
+    public function getMenusArray($groups)
     {
         $array = [];
-        foreach ($projects as $project) {
-            if($project->permissions->count()){
-                $array[$project->id] = $project->permissions->lists('display_name', 'id')->toArray();
+        foreach ($groups as $group) {
+            $array[$group->id]['name'] = $group->name;
+            if($group->permissions()->where('name', 'like', '%view')->count()>0){
+                $array[$group->id]['resource_name'] = $group->permissions()->where('name', 'like', '%view')->pluck('display_name');
+                $array[$group->id]['resource'] = explode('_', $group->permissions()->where('name', 'like', '%view')->pluck('name'))[0];
             }
-            if ($project->children()->count()) {
-                array_push($array,$this->getPermissionsArray($project->children()->get()));
+            if ($group->children()->count()) {
+                $array[$group->id]['children'] = $this->getMenusArray($group->children()->get());
+            }
+        }
+        return $array;
+    }*/
+
+    public function getPermissionsArray($groups)
+    {
+        $array = [];
+        foreach ($groups as $group) {
+            if($group->permissions->count()){
+                $array[$group->id] = $group->permissions->lists('display_name', 'id')->toArray();
+            }
+            if ($group->children()->count()) {
+                array_push($array,$this->getPermissionsArray($group->children()->get()));
             }
         }
         return $array;
@@ -71,27 +107,31 @@ class PermissionGroupRepository extends Repository {
 
     public function getOrderdPermissions()
     {
-        $projects = $this->getAllGroups();
+        $groups = $this->getAllGroups();
         $permissions_array =  [];
-        foreach (array_dot($this->getPermissionsArray($projects)) as $key => $permission) {
+        foreach (array_dot($this->getPermissionsArray($groups)) as $key => $permission) {
             $array =  explode('.',$key);
             end($array);
-            $group =  prev($array);
-            if (!isset($permissions_array[$group][last($array)])){
-                $permissions_array[$group][last($array)] = [];
+            $group_id =  prev($array);
+            $permission_id =last($array);
+            if (!isset($permissions_array[$group_id][$permission_id])){
+                $permissions_array[$group_id][$permission_id] = [];
             }
-            array_push($permissions_array[$group][last($array)],$permission);
+            $dependencies = $this->permission->find($permission_id)->dependencies()->lists('dependency_id');
+            if($dependencies->count()>0){$permission .= '[D]';}
+            $permissions_array[$group_id][$permission_id]['name'] = $permission;
+            $permissions_array[$group_id][$permission_id]['dependencies'] =  $dependencies->all();
         }
         return $permissions_array;
     }
 
-    public function getGroupsArray($projects,$pre = '├─')
+    public function getGroupsArray($groups,$pre = '├─')
     {
         $array = [];
-        foreach ($projects as $project) {
-        	$array[$project->id]['name'] = $pre.$project->name;
-            if ($project->children()->count()) {
-            	array_push($array,$this->getGroupsArray($project->children()->get(),$pre.'──'));
+        foreach ($groups as $group) {
+        	$array[$group->id]['name'] = $pre.$group->name;
+            if ($group->children()->count()) {
+            	array_push($array,$this->getGroupsArray($group->children()->get(),$pre.'──'));
             }
         }
         return $array;
@@ -110,17 +150,13 @@ class PermissionGroupRepository extends Repository {
         return $groups_array;
     }
 
-    public function update($id, $input) {
-        $group = $this->find($id);
-        return $group->update($input);
-    }
-
     public function updateSort($hierarchy) {
         foreach ($this->flattenJsonTree($hierarchy) as $group) {
-            $this->find((int)$group['item_id'])->update([
-                'parent_id' => (int)$group['parent'],
-                'sort' => (int)$group['position'],
+            $this->save($group['id'], [
+                'parent_id' => (int)$group['parent_id'],
+                'sort' => (int)$group['sort'],
             ]);
+
         }
         return true;
     }
@@ -136,10 +172,10 @@ class PermissionGroupRepository extends Repository {
                 );
             }
             $aRetval[] = [
-                'item_id'  => $aChilds['id'],
-                'parent'   => $iParentId,
+                'id'  => $aChilds['id'],
+                'parent_id'   => $iParentId,
                 'level'    => $iLevel,
-                'position' => $iPosition++,
+                'sort' => $iPosition++,
             ];
             $aRetval = array_merge($aRetval, $aDescendents);
         }

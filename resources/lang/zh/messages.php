@@ -63,7 +63,7 @@ return [
     'permissions'           => '权限',
     'group_id'           => '权限分组',
     'sort'           => '排序',
-    'permission_denied'     => '没有权限',
+    'permission_denied'     => '无权限',
     'articles'              => '文章',
     'description'           => '描述',
     'content'               => '内容',
@@ -78,4 +78,8 @@ return [
     'permission_delete_messages'    => '如需删除请先删除关联权限',
     'group_delete_error'    => '有子节点，无法删除',
     'group_delete_messages'    => '如需删除请先删除子节点',
+
+    'permissiondependencies' => '权限依赖',
+
+
 ];

@@ -15,8 +15,9 @@ class RoleRepository extends Repository
         $role = parent::save($id, $data);
 
         //Assing user roles
-        if (count($data['permissions']) > 0) {
-            $role->permissions()->sync($data['permissions']);
+        $permissions =  explode(',',$data['permissions']);
+        if (count($permissions) > 0) {
+            $role->permissions()->sync($permissions);
         }
 
         return $role;

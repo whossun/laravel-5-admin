@@ -1,47 +1,25 @@
 <?php
 return [
     'dashboard' => [
-        'permission' => 'dashboard_view',
-        'icon' => 'fa-dashboard',
-        'edit' => true,
-        'name' => 'messages.dashboard'
+        'icon' => 'fa-dashboard'
     ],
     'users' => [
-        'permission' => 'users_view',
-        'icon' => 'fa-users',
-        'edit' => true,
-        'name' => 'messages.users'
+        'icon' => 'fa-users'
     ],
     'roles' => [
-        'permission' => 'roles_view',
-        'icon' => 'fa-get-pocket',
-        'edit' => true,
-        'name' => 'messages.roles'
+        'icon' => 'fa-get-pocket'
     ],
     'permissions' => [
-        'permission' => 'permissions_view',
-        'icon' => 'fa-lock',
-        'edit' => true,
-        'name' => 'messages.permissions'
+        'icon' => 'fa-lock'
     ],
     'permissiongroups' => [
-        'permission' => 'permissiongroups_view',
-        'icon' => 'fa fa-object-group',
-        'edit' => true,
-        'name' => 'messages.permissiongroups'
+        'icon' => 'fa fa-object-group'
     ],
     'articles' => [
-        'permission' => 'articles_view',
-        'icon' => 'fa-file-o',
-        'edit' => true,
-        'name' => 'messages.articles'
+        'icon' => 'fa-file-o'
     ],
     'settings' => [
-        'permission' => 'settings_view',
-        'icon' => 'fa-file-o',
-        'edit' => true,
-        'name' => 'messages.settings'
+        'icon' => 'fa-file-o'
     ],
-
 
 ];

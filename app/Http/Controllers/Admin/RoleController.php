@@ -20,11 +20,11 @@ class RoleController extends Controller {
     {
         if ($request->ajax()) {
             return Datatables::of($this->role->all())
-            ->addColumn('action', function($model) { return $this->role->action_butttons($model);})
+            ->addColumn('action', function($model) { return $this->role->actionButttons($model);})
             ->make(true);
         }
         $html = $this->role->columns();
-        return view('datatable',compact('html'));
+        return view('layout.partials.datatable',compact('html'));
     }
 
     public function create(Request $request, FormBuilder $formBuilder)
@@ -44,11 +44,12 @@ class RoleController extends Controller {
                 'status' => trans('messages.saved'),
                 'type' => 'success'
             ]);
-        }        $route = ($request->get('task')=='apply') ? route('admin.roles.edit', $role->id) : route('admin.roles.index');
-        return redirect($route)->with([
-            'status' => trans('messages.saved'), 
-            'type' => 'success'
-        ]);
+        }
+        $route = ($request->get('task')=='apply') ? route('admin.roles.edit', $role->id) : route('admin.roles.index');
+            return redirect($route)->with([
+                'status' => trans('messages.saved'),
+                'type' => 'success'
+            ]);
     }
 
     public function show($id)
@@ -70,16 +71,16 @@ class RoleController extends Controller {
 
     public function update($id, RoleRequest $request)
     {
-        // dd($request->all());
         $this->role->save($id, $request->all());
         if($request->ajax()){
             return response()->json([
                 'status' => trans('messages.saved'),
                 'type' => 'success'
             ]);
-        }        $route = ($request->get('task')=='apply') ? route('admin.roles.edit', $id) : route('admin.roles.index');
+        }
+        $route = ($request->get('task')=='apply') ? route('admin.roles.edit', $id) : route('admin.roles.index');
         return redirect($route)->with([
-            'status' => trans('messages.saved'), 
+            'status' => trans('messages.saved'),
             'type' => 'success'
         ]);
     }
@@ -88,7 +89,7 @@ class RoleController extends Controller {
     {
         $this->role->deleteAll(explode(',', $ids));
         return [
-            'status' => trans('messages.delete.success'), 
+            'status' => trans('messages.delete.success'),
             'type' => 'success'
         ];
     }

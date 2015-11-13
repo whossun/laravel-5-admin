@@ -48,6 +48,10 @@ class Authenticate
                 return redirect()->guest('auth/login');
             }
         }
+        if (!$request->user()->isAdmin() && $request->user()->cannot('dashboard_view')) {
+            $this->auth->logout();
+            return redirect()->guest('auth/login')->withErrors(trans('messages.permission_denied'));
+        }
         $route_array = explode('.', $request->route()->getName());
         $permission_name = array_search($route_array[2],array_dot($this->permission_fields));
         if($permission_name){

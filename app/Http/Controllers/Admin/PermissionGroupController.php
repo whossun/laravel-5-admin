@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Repositories\PermissionGroupRepository as PermissionGroup;
 use App\Http\Requests\PermissionGroup\PermissionGroupRequest;
 use App\Http\Requests\PermissionGroup\SortPermissionGroupRequest;
-
 use Datatables;
 
 class PermissionGroupController extends Controller {
@@ -18,15 +17,17 @@ class PermissionGroupController extends Controller {
         $this->permissiongroup = $permissiongroup;
     }
 
-
-    public function index(Request $request)
+    public function index()
     {
         $groups      = $this->permissiongroup->getAllGroups();
-        $groups_tree =  $this->permissiongroup->getTree($groups);
         $groups_hierarchy =  $this->permissiongroup->getHierarchy($groups);
-        if ($request->ajax())
-            return $groups_tree;
-        return view('rbac.permissiongroups', compact('groups_hierarchy','groups_tree'));
+        return view('rbac.permission_groups', compact('groups_hierarchy'));
+    }
+
+    public function buildTree()
+    {
+        $groups = $this->permissiongroup->getAllGroups();
+        return  $this->permissiongroup->getTree($groups);
     }
 
     public function create(Request $request,FormBuilder $formBuilder)
@@ -68,7 +69,7 @@ class PermissionGroupController extends Controller {
 
     public function update($id, PermissionGroupRequest $request)
     {
-        $this->permissiongroup->update($id, $request->all());
+        $this->permissiongroup->save($id, $request->all());
         if($request->ajax()){
             return response()->json([
                 'status' => trans('messages.saved'),

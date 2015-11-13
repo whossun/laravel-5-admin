@@ -14,6 +14,7 @@ var assets = "resources/assets/",
         'fontawesome': bower + 'font-awesome/',
         'ionicons': bower + 'Ionicons/',
         'datatables': bower + 'AdminLTE/plugins/datatables/',
+        'jqueryui': bower + 'jquery-ui/ui/minified/',
         'toastr': bower + 'toastr/',
     },
     developmentAssets = "public/";
@@ -68,10 +69,14 @@ elixir(function(mix) {
         ], developmentAssets + "css/backend.css", assets)
         .scripts([
             bower + "jquery/dist/jquery.min.js",
+            paths.jqueryui + "core.min.js",
+            paths.jqueryui + "effect.min.js",
+            paths.jqueryui + "effect-highlight.min.js",
             paths.bootstrap + "js/bootstrap.min.js",
             paths.datatables + "jquery.dataTables.min.js",
             paths.datatables + "dataTables.bootstrap.min.js",
             paths.datatables + "extensions/Responsive/js/dataTables.responsive.min.js",
+            bower + "yadcf/jquery.dataTables.yadcf.js",
             paths.adminlte + "plugins/iCheck/icheck.min.js",
             paths.adminlte + "plugins/slimScroll/jquery.slimscroll.min.js",
             paths.adminlte + "plugins/fastclick/fastclick.min.js",

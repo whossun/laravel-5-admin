@@ -11,10 +11,10 @@ Route::controllers([
 ]);
 
 //Admin
-Route::group(array('prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth'), function () {
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 'auth'], function () {
 
     //Dashboard
-    Route::get('/', array('as' => 'admin.dashboard.index', 'uses' => 'DashboardController@index'));
+    Route::get('/', ['as' => 'admin.dashboard.index', 'uses' => 'DashboardController@index']);
 
     //Users
     Route::resource('users', 'UserController');
@@ -24,23 +24,24 @@ Route::group(array('prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => 
 
     //Permissions
     Route::resource('permissions', 'PermissionController');
+    Route::post('permissions/update-sort', ['as' => 'admin.permissions.update_sort', 'uses' => 'PermissionController@updateSort']);
 
     //PermissionGroup
     Route::resource('permissiongroups', 'PermissionGroupController', ['except' => ['show']]);
-    Route::post('permissiongroups/update-sort', array('as' => 'admin.permissiongroups.update_sort', 'uses' => 'PermissionGroupController@updateSort'));
+    Route::group(['prefix' => 'permissiongroups','as' => 'admin.permissiongroups.'], function () {
+        Route::get('build-tree', ['as' => 'build_tree', 'uses' => 'PermissionGroupController@buildTree']);
+        Route::post('update-sort', ['as' => 'update_sort', 'uses' => 'PermissionGroupController@updateSort']);
+    });
 
     //Articles
     Route::resource('articles', 'ArticleController');
 
     //Settings
     Route::resource('settings', 'SettingController');
-
-    //Test
-    Route::resource('tests', 'TestController');
 });
 
 //Api
-Route::group(array('prefix' => 'api', 'middleware' => 'allowOrigin'), function () {
+Route::group(['prefix' => 'api', 'middleware' => 'allowOrigin'], function () {
     //Users
     Route::resource('users', 'Api\UserController', ['only' => ['index', 'show']]);
 });

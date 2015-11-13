@@ -26,18 +26,18 @@
                 </div><!-- /.box-body -->
         </div><!-- /.box -->
     </div><!-- /.col (left) -->
+    @can('permissiongroups_build_tree')
     <div class="col-md-6">
         <div class="box box-success">
             <div class="box-header">
               	<h3 class="box-title">权限树</h3>
 				<div class="pull-right box-tools">
 					@can($route['table'].'_update')
-					<a class="btn btn-primary" title="{{trans('messages.edit')}}" id="tree-edit"><i class="fa fa-pencil"> {{trans('messages.edit')}}</i></a>
+					<a class="btn btn-primary hide" title="{{trans('messages.edit')}}" id="tree-edit"><i class="fa fa-pencil"> {{trans('messages.edit')}}</i></a>
 					@endcan
 					@can($route['table'].'_delete')
-					<a class="btn btn-danger" title="{{trans('messages.delete')}}" id="tree-delete"><i class="fa fa-trash"> {{trans('messages.delete')}}</i></a>
+					<a class="btn btn-danger hide" title="{{trans('messages.delete')}}" id="tree-delete"><i class="fa fa-trash"> {{trans('messages.delete')}}</i></a>
 					@endcan
-                    <button class="btn btn-info" title="{{trans('messages.refresh')}}" onclick="window.location.reload();"><i class="fa fa-refresh"> {{trans('messages.refresh')}}</i></button>
 				</div>
             </div>
             <div class="box-body">
@@ -46,6 +46,7 @@
             </div><!-- /.box-body -->
         </div><!-- /.box -->
     </div><!-- /.col (right) -->
+    @endcan
 </div><!-- /.row -->
 @stop
 
@@ -57,9 +58,9 @@ $(function() {
     var hierarchy = $('.permission-hierarchy');
     var tree = $('#permission-tree');
 
-    hierarchy.nestable({maxDepth:3});
+    hierarchy.nestable({maxDepth:2});
     hierarchy.on('change', function() {
-        @can('permissiongroups_sort')
+        @can('permissiongroups_update_sort')
             $.ajax({
                 url : "{!! route('admin.permissiongroups.update_sort') !!}",
                 type: "post",
@@ -81,10 +82,11 @@ $(function() {
         @endcan
     });
 
+@can('permissiongroups_build_tree')
 	tree.jstree({
 		'core' : {
 			'data' : {
-				'url' : "{!! route('admin.permissiongroups.index') !!}"
+				'url' : "{!! route('admin.permissiongroups.build_tree') !!}"
 			}
 		},
 	    "types" : {
@@ -101,15 +103,25 @@ $(function() {
 		data.instance.set_icon(data.node, "fa fa-folder-o");
 	});
 
+    tree.bind(
+        "select_node.jstree", function(evt, data){
+            $('#tree-edit').removeClass('hide');
+            $('#tree-delete').removeClass('hide');
+        }
+    );
+
     $('#tree-new').click(function(e) {
         e.preventDefault();
-        // window.location.href = '{{ url(Request::path()) }}/create';
-        $.get('{{ url(Request::path()) }}/create', function(data){
-            bootbox.dialog({
-                closeButton: false,
-                message: data,
+        if(get('ajax-modal')=='true') {
+            $.get('{{ url(Request::path()) }}/create', function(data){
+                bootbox.dialog({
+                    closeButton: false,
+                    message: data,
+                });
             });
-        });
+        }else{
+            window.location.href = '{{ url(Request::path()) }}/create';
+        }
     });
 
     $('#tree-edit').click(function(e) {
@@ -120,13 +132,7 @@ $(function() {
 			return false;
 		}
 	    var id = $('#'+CurrentNode).data('id');
-	    // window.location.href = '{{ url(Request::path()) }}/'+id+'/edit';
-        $.get('{{ url(Request::path()) }}/'+id+'/edit', function(data){
-            bootbox.dialog({
-                closeButton: false,
-                message: data,
-            });
-        });
+        window.location.href = '{{ url(Request::path()) }}/'+id+'/edit';
     });
 
     $('#tree-delete').click(function(e) {
@@ -155,7 +161,7 @@ $(function() {
             }
         });
     });
-
+@endcan
 
 });
 

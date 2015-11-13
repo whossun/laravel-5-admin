@@ -7,7 +7,7 @@
 @section('content')
     <div class="row">
         <div class="col-xs-12">
-            <div id="frmModel" class="box">
+            <div id="frmModel" class="box {{($route['action']== 'create') ? 'box-success': 'box-primary'}}">
                 <div class="box-body">
                     @yield('form', form($form))
                 </div>
@@ -23,4 +23,10 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('scripts')
+    @if(isset($script))
+        {!! Html::script($script) !!}
+    @endif
 @stop

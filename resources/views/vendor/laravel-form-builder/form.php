@@ -9,7 +9,7 @@
 		<?php } ?>
     <?php endforeach; ?>
 <?php endif; ?>
-
+<?= Form::submit('',['class'=>'hide','id'=>'submitButton']); ?>
 <?php if ($showEnd): ?>
     <?= Form::close() ?>
 <?php endif; ?>

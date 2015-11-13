@@ -21,11 +21,11 @@ class SettingController extends Controller {
     {
         if ($request->ajax()) {
             return Datatables::of($this->setting->all())
-            ->addColumn('action', function($model) { return $this->setting->action_butttons($model);})
+            ->addColumn('action', function($model) { return $this->setting->actionButttons($model);})
             ->make(true);
         }
         $html = $this->setting->columns();
-        return view('datatable',compact('html'));
+        return view('layout.partials.datatable',compact('html'));
     }
 
     public function create(Request $request, FormBuilder $formBuilder)

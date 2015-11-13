@@ -20,11 +20,11 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             return Datatables::of($this->user->all())
-            ->addColumn('action', function($model) { return $this->user->action_butttons($model);})
+            ->addColumn('action', function($model) { return $this->user->actionButttons($model);})
             ->make(true);
         }
         $html = $this->user->columns();
-        return view('datatable',compact('html'));
+        return view('layout.partials.datatable',compact('html'));
     }
 
     public function create(Request $request, FormBuilder $formBuilder)

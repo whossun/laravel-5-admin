@@ -9,6 +9,8 @@
     "screenfull": "~2.0.0",
     "jstree": "~3.2.1",
     "toastr": "~2.1.2",
-    "bootbox.js": "bootbox#~4.4.0"
+    "bootbox.js": "bootbox#~4.4.0",
+    "jquery-ui": "jqueryui#~1.11.4",
+    "yadcf": "~0.8.8"
   }
 }

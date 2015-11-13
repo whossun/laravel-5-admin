@@ -5,7 +5,8 @@ use Kris\LaravelFormBuilder\FormBuilder;
 use App\Http\Controllers\Controller;
 use App\Repositories\PermissionRepository as Permission;
 use App\Repositories\PermissionGroupRepository as PermissionGroup;
-use App\Http\Requests\PermissionRequest;
+use App\Http\Requests\Permission\PermissionRequest;
+use App\Http\Requests\Permission\SortPermissionRequest;
 use Datatables;
 
 class PermissionController extends Controller {
@@ -20,14 +21,33 @@ class PermissionController extends Controller {
 
     public function index(Request $request)
     {
+/*        $html = Datatables::of($this->permission->all())
+            ->addColumn('permissiondependencies',  function($model) {
+                $str = '';
+                foreach ($model->dependencies as $dependency) {
+                    $str.= '<span class="label label-info">'.$dependency->permission->display_name.'</span> ';
+                }
+                return $str;
+            })
+            ->addColumn('action', function($model) { return $this->permission->actionButttons($model);})
+            ->editColumn('group_id', function($model) { if($model->group){return $model->group->name;}})
+            ->make(true);
+        return view('test',compact('html'));*/
         if ($request->ajax()) {
             return Datatables::of($this->permission->all())
-            ->addColumn('action', function($model) { return $this->permission->action_butttons($model);})
+            ->addColumn('permissiondependencies',  function($model) {
+                $str = '';
+                foreach ($model->dependencies as $dependency) {
+                    $str.= '<span class="label label-info">'.$dependency->permission->display_name.'</span> ';
+                }
+                return $str;
+            })
+            ->addColumn('action', function($model) { return $this->permission->actionButttons($model);})
             ->editColumn('group_id', function($model) { if($model->group){return $model->group->name;}})
             ->make(true);
         }
         $html = $this->permission->columns();
-        return view('datatable',compact('html'));
+        return view('layout.partials.datatable',compact('html'));
     }
 
     public function create(Request $request, FormBuilder $formBuilder)
@@ -36,7 +56,8 @@ class PermissionController extends Controller {
             'method' => 'POST',
             'url' => route('admin.permissions.store')
         ]);
-        return view($request->ajax()?'rbac.permission_ajaxform':'layout.partials.form', compact('form'));
+        $script = 'js/backend/access/permissions/dependencies/script.js';
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form','script'));
     }
 
     public function store(PermissionRequest $request)
@@ -71,12 +92,13 @@ class PermissionController extends Controller {
             'method' => 'PUT',
             'url' => route('admin.permissions.update', $id)
         ]);
-        return view($request->ajax()?'rbac.permission_ajaxform':'layout.partials.form', compact('form'));
+        $script = 'js/backend/access/permissions/dependencies/script.js';
+        return view($request->ajax()?'layout.partials.ajax_form':'layout.partials.form', compact('form','script'));
     }
 
     public function update($id, PermissionRequest $request)
     {
-        $this->permission->save($id, $request->all());
+        $this->permission->saveWithDependencies($id, $request->all());
         if($request->ajax()){
             return response()->json([
                 'status' => trans('messages.saved'),
@@ -89,11 +111,16 @@ class PermissionController extends Controller {
         ]);
     }
 
+    public function updateSort(SortPermissionRequest $request) {
+        $this->permission->updateSort($request->get('data'));
+        return response()->json(['status' => 'OK']);
+    }
+
     public function destroy($ids)
     {
         $this->permission->deleteAll(explode(',', $ids));
         return [
-            'status' => trans('messages.delete.success'), 
+            'status' => trans('messages.delete.success'),
             'type' => 'success'
         ];
     }

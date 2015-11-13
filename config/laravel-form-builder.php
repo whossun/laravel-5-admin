@@ -27,6 +27,6 @@ return [
     'default_namespace' => '',
 
     'custom_fields' => [
-       'permission_checkbox' => 'App\Forms\Fields\PermissionCheckbox'
+
     ]
 ];
