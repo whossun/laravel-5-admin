@@ -13,13 +13,12 @@ class RoleRepository extends Repository
     public function save($id, $data)
     {
         $role = parent::save($id, $data);
-
         //Assing user roles
-        $permissions =  explode(',',$data['permissions']);
+        $permissions = strlen($data['permissions']) ? explode(",", $data['permissions']) : [];
+        $permissions =  explode(',',trim($data['permissions']));
         if (count($permissions) > 0) {
             $role->permissions()->sync($permissions);
         }
-
         return $role;
     }
 
